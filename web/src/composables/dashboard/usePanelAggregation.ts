@@ -13,11 +13,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { STATE_TIMELINE_Y_FUNCTION } from "@/utils/dashboard/defaultFields";
+import {
+  STATE_TIMELINE_Y_FUNCTION,
+  buildDefaultBuilderFields,
+} from "@/utils/dashboard/defaultFields";
+import { isCustomSqlPanel, isRowTimeline } from "@/utils/dashboard/chartTypeGroups";
 import {
   HOSTMAP_DEFAULT_COLOR,
   HOSTMAP_MAX_GROUP_LEVELS,
 } from "@/utils/dashboard/convertHostmapData";
+
+// Types that reset their own queries on a switch, so no builder state carries into them.
+const NON_BUILDER_TYPES = ["html", "markdown", "custom_chart"];
+
+const STARTER_QUERY_PATTERNS: RegExp[] = [];
+
+/** Whether `text` is still the untouched starter SQL a panel was seeded with. */
+export const isPanelStarterQuery = (text: unknown): boolean =>
+  typeof text === "string" && STARTER_QUERY_PATTERNS.some((pattern) => pattern.test(text.trim()));
 
 const BY_SERIES_COLOR_MODES = ["palette-classic-by-series", "palette-classic"];
 
@@ -34,23 +47,50 @@ export const usePanelAggregation = ({
   dashboardPanelData,
   getDefaultQueries,
   getDefaultCustomChartText,
+  getTimestampColumn = () => "_timestamp",
 }: {
   dashboardPanelData: any;
   getDefaultQueries: () => any;
   getDefaultCustomChartText: () => string;
+  getTimestampColumn?: () => string;
 }) => {
+  // An untouched starter is not the user's SQL, so a builder chart takes the query back.
+  const returnStartersToBuilder = () => {
+    dashboardPanelData.data.queries?.forEach((query: any) => {
+      if (!query?.customQuery || !isPanelStarterQuery(query.query)) return;
+      query.customQuery = false;
+      query.query = "";
+      if (query.fields.x.length || query.fields.y.length) return;
+      const { x, y } = buildDefaultBuilderFields(
+        dashboardPanelData.data.type,
+        query.fields.stream_type,
+        dashboardPanelData.meta?.streamFields?.groupedFields ?? [],
+        query.fields.stream,
+        getTimestampColumn(),
+      );
+      query.fields.x = x;
+      query.fields.y = y;
+    });
+  };
+
   const resetAggregationFunction = () => {
     // Skip resetting fields for PromQL mode to preserve the query
     if (dashboardPanelData.data.queryType === "promql") {
       // A state timeline has no comparison window; a shift left over from another type must not run.
-      if (["state-timeline", "hostmap"].includes(dashboardPanelData.data.type)) {
+      if (
+        isRowTimeline(dashboardPanelData.data.type) ||
+        dashboardPanelData.data.type === "hostmap"
+      ) {
         dashboardPanelData.data.queries?.forEach((query: any) => (query.config.time_shift = []));
       }
       if (dashboardPanelData.data.type === "hostmap") applyHostmapColorScale(dashboardPanelData);
       return;
     }
 
-    switch (dashboardPanelData.data.type) {
+    const type = dashboardPanelData.data.type;
+    if (!isCustomSqlPanel(type) && !NON_BUILDER_TYPES.includes(type)) returnStartersToBuilder();
+
+    switch (type) {
       case "hostmap":
         dashboardPanelData.data.queries?.forEach((query: any) => {
           // A time bucket cannot name a cell, so only a plain field stays as the entity.
@@ -133,6 +173,7 @@ export const usePanelAggregation = ({
         // the values of lat, lng and weight in all the queries
         dashboardPanelData.data.queries?.forEach((query: any) => {
           const isStateTimeline = dashboardPanelData.data.type === "state-timeline";
+          const isRowChart = isRowTimeline(dashboardPanelData.data.type);
           // A count is never a state and the timeline reads one field, so only the first other y stays.
           if (isStateTimeline) {
             query.fields.y = query.fields.y
@@ -167,7 +208,7 @@ export const usePanelAggregation = ({
             }
           }
           // A state timeline has no comparison window; a shift left over from another type must not run.
-          if (isStateTimeline) query.config.time_shift = [];
+          if (isRowChart) query.config.time_shift = [];
         });
         dashboardPanelData.data.htmlContent = "";
         dashboardPanelData.data.markdownContent = "";

@@ -393,6 +393,17 @@ describe("ConfigPanel", () => {
       expect(wrapper.vm.dashboardPanelData.data.description).toBe("New description");
     });
 
+    it("drops decimals instead of storing an empty string when the field is cleared", async () => {
+      wrapper = createWrapper();
+      const config = wrapper.vm.dashboardPanelData.data.config;
+      config.decimals = 3;
+
+      const decimalsInput = wrapper.findComponent('[data-test="dashboard-config-decimals"]');
+      await decimalsInput.vm.$emit("update:modelValue", "");
+
+      expect("decimals" in config).toBe(false);
+    });
+
     it("should handle empty description", () => {
       // Create fresh mock data with empty description to ensure test isolation
       const freshMockData = {

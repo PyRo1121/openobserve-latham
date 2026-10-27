@@ -110,6 +110,8 @@ export function applyPieDonutChart(ctx: SQLContext): void {
           formatter: "{d}%", // {b} represents name, {c} represents value {d} represents percent
           position: "inside", // You can adjust the position of the labels
           fontSize: 10,
+          // ECharts haloes inside labels in the slice colour, which glares where a label spills onto a dark panel.
+          textBorderColor: "transparent",
         },
         percentPrecision: Math.min(
           pieLegendPercentDecimals(panelSchema.config?.decimals),
@@ -250,6 +252,8 @@ export function applyPieDonutChart(ctx: SQLContext): void {
           formatter: "{d}%", // {b} represents name, {c} represents value {d} represents percent
           position: "inside", // You can adjust the position of the labels
           fontSize: 10,
+          // ECharts haloes inside labels in the slice colour, which glares where a label spills onto a dark panel.
+          textBorderColor: "transparent",
         },
         percentPrecision: Math.min(
           pieLegendPercentDecimals(panelSchema.config?.decimals),

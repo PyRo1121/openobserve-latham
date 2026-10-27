@@ -16,6 +16,7 @@
 import { computed } from "vue";
 import { generateLabelFromName } from "@/utils/dashboard/fieldLabel";
 import { STATE_TIMELINE_Y_FUNCTION } from "@/utils/dashboard/defaultFields";
+import { isRawValueChart } from "@/utils/dashboard/chartTypeGroups";
 import {
   HOSTMAP_MAX_GROUP_LEVELS,
   HOSTMAP_NUMERIC_Y_FUNCTION,
@@ -349,7 +350,9 @@ export const usePanelFields = ({
       color: getNewColorValue(),
       type: "build",
       functionName:
-        dashboardPanelData.data.type == "heatmap" || isDerived
+        dashboardPanelData.data.type == "heatmap" ||
+        isRawValueChart(dashboardPanelData.data.type) ||
+        isDerived
           ? null
           : dashboardPanelData.data.type == "state-timeline"
             ? STATE_TIMELINE_Y_FUNCTION

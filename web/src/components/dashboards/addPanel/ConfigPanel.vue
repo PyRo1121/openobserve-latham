@@ -604,7 +604,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           max="100"
           @update:model-value="
             (val: string | number) => {
-              if (typeof val === 'number' && (val < 0 || val > 100)) {
+              // The backend reads decimals as a number, so an empty field must not be saved as an empty string.
+              if (val === '' || val == null) {
+                delete dashboardPanelDataModel.data.config.decimals;
+              } else if (typeof val === 'number' && (val < 0 || val > 100)) {
                 decimalsTouched = true;
               }
             }
