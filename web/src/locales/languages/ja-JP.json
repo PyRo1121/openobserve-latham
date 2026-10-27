@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "次の値未満のセルを非表示",
     "heatmapHideBelowTooltip": "これより小さい値のセルは空白になります。",
+    "sunburstShowLabels": "ラベルを表示",
     "stateValueAlign": "状態テキストの配置",
     "mapCluster": "ポイントをクラスター化",
     "mapClusterRadius": "クラスターのサイズ (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "ゲージ",
       "html": "HTML",
       "markdown": "Markdown",
+      "sunburst": "サンバースト",
       "sankey": "Sankey図",
       "customChart": "カスタムチャート"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "これらのフィールドを使用してデータを Y 軸上のさまざまなセクションに分割すると、見やすくなります。",
     "breakdownTooltipDefault": "これらのフィールドを使用してデータを X 軸上のさまざまなセクションに分割すると、見やすくなります。",
     "breakdownTooltipStateTimeline": "このフィールドの各値はタイムラインでそれぞれ別の行になります。",
+    "breakdownTooltipSunburst": "内側のリングの各セグメントを外側のリングに分割します。このフィールドの値ごとに 1 セグメントです。",
     "breakdownTooltipHostmap": "セルはこれらのフィールドで分割されます: 1 つ目が外側のグループ、2 つ目が内側のグループです。",
     "hostmapEntity": "エンティティ",
     "hostmapValue": "値",

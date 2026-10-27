@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Ukryj komórki poniżej",
     "heatmapHideBelowTooltip": "Komórki o mniejszej wartości pozostają puste.",
+    "sunburstShowLabels": "Pokaż etykiety",
     "stateValueAlign": "Wyrównanie tekstu stanu",
     "mapCluster": "Grupuj punkty",
     "mapClusterRadius": "Rozmiar klastra (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "Wskaźnik",
       "html": "HTML",
       "markdown": "Markdown",
+      "sunburst": "Wykres słoneczny",
       "sankey": "Sankey",
       "customChart": "Wykres niestandardowy"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "Użyj tych pól, aby podzielić dane na różne sekcje na osi Y dla lepszego widoku.",
     "breakdownTooltipDefault": "Użyj tych pól, aby podzielić dane na różne sekcje na osi X dla lepszego widoku.",
     "breakdownTooltipStateTimeline": "Każda wartość tego pola otrzymuje własny wiersz na osi czasu.",
+    "breakdownTooltipSunburst": "Dzieli każdy segment wewnętrznego pierścienia na pierścień zewnętrzny, jeden segment na wartość tego pola.",
     "breakdownTooltipHostmap": "Komórki są określane przez te pola: pierwsze to grupa zewnętrzna, drugie to grupa wewnętrzna.",
     "hostmapEntity": "Encja",
     "hostmapValue": "Wartość",

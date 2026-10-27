@@ -792,6 +792,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
 
         <OSwitch
+          v-if="dashboardPanelData.data.type === 'sunburst'"
+          v-show="isConfigOptionVisible('data', 'sunburst-labels')"
+          :model-value="dashboardPanelData.data.config.sunburst_show_labels !== false"
+          :label="t('dashboard.sunburstShowLabels')"
+          data-test="dashboard-config-sunburst_show_labels"
+          size="lg"
+          @update:model-value="(value: any) => setDefaultOnFlag('sunburst_show_labels', value)"
+        />
+
+        <OSwitch
           v-if="promqlMode && dashboardPanelData.data.type === 'heatmap'"
           v-show="isConfigOptionVisible('data', 'heatmap-histogram-mode')"
           v-model="heatmapHistogramModeModel"
@@ -4514,6 +4524,7 @@ export default defineComponent({
         "pie",
         "donut",
         "gauge",
+        "sunburst",
         "sankey",
         "hostmap",
       ].includes(dashboardPanelData.data.type);

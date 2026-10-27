@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Ocultar celdas por debajo de",
     "heatmapHideBelowTooltip": "Las celdas con un valor inferior quedan vacías.",
+    "sunburstShowLabels": "Mostrar etiquetas",
     "stateValueAlign": "Alineación del texto de estado",
     "mapCluster": "Agrupar puntos",
     "mapClusterRadius": "Tamaño del grupo (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "Medidor",
       "html": "HTML",
       "markdown": "Markdown",
+      "sunburst": "Sunburst",
       "sankey": "Sankey",
       "customChart": "Gráfico personalizado"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "Utilice estos campos para dividir los datos en diferentes secciones del eje Y para obtener una visión más clara.",
     "breakdownTooltipDefault": "Utilice estos campos para dividir los datos en diferentes secciones del eje X para una visualización más clara.",
     "breakdownTooltipStateTimeline": "Cada valor de este campo tiene su propia fila en la cronología.",
+    "breakdownTooltipSunburst": "Divide cada segmento del anillo interior en un anillo exterior, un segmento por valor de este campo.",
     "breakdownTooltipHostmap": "Las celdas están delimitadas por estos campos: el primero es el grupo externo y el segundo, el interno.",
     "hostmapEntity": "Entidad",
     "hostmapValue": "Valor",

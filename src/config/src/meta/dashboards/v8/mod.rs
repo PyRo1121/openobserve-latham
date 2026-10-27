@@ -770,6 +770,8 @@ pub struct PanelConfig {
     #[schema(value_type = Option<f64>)]
     map_cluster_radius: Option<OrdF64>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    sunburst_show_labels: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     hostmap_entity_label: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     hostmap_group_by: Option<Vec<String>>,
@@ -2962,7 +2964,9 @@ mod tests {
             "map_cluster": true,
             "map_cluster_radius": 40.0
         });
-        let rest3 = serde_json::json!({});
+        let rest3 = serde_json::json!({
+            "sunburst_show_labels": true
+        });
         for part in [rest, rest2, rest3] {
             fields
                 .as_object_mut()

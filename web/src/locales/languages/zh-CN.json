@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "隐藏低于此值的单元格",
     "heatmapHideBelowTooltip": "值低于此值的单元格保持空白。",
+    "sunburstShowLabels": "显示标签",
     "stateValueAlign": "状态文本对齐",
     "mapCluster": "聚合点",
     "mapClusterRadius": "聚合大小 (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "仪表",
       "html": "HTML",
       "markdown": "Markdown",
+      "sunburst": "旭日图",
       "sankey": "桑基图",
       "customChart": "自定义图表"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "使用这些字段在 Y 轴上将数据拆分为不同的部分，以获得更清晰的视图。",
     "breakdownTooltipDefault": "使用这些字段在 X 轴上将数据拆分为不同的部分，以获得更清晰的视图。",
     "breakdownTooltipStateTimeline": "该字段的每个值在时间线中各自占一行。",
+    "breakdownTooltipSunburst": "将内环的每个扇区拆分为外环，此字段的每个值对应一个扇区。",
     "breakdownTooltipHostmap": "单元格由这些字段划分：第一个是外部分组，第二个是内部分组。",
     "hostmapEntity": "实体",
     "hostmapValue": "值",

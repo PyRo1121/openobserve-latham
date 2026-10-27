@@ -131,6 +131,11 @@ export default defineComponent({
         id: "donut",
       },
       {
+        image: "img:" + getImageURL("images/dashboard/charts/sunburst.svg"),
+        title: t("dashboard.chartSelection.sunburst"),
+        id: "sunburst",
+      },
+      {
         image: "img:" + getImageURL("images/dashboard/charts/heatmap.svg"),
         title: t("dashboard.heatmapLabel"),
         id: "heatmap",

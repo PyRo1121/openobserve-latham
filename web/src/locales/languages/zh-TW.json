@@ -7414,6 +7414,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "隱藏低於此值的儲存格",
     "heatmapHideBelowTooltip": "值低於此值的儲存格保持空白。",
+    "sunburstShowLabels": "顯示標籤",
     "stateValueAlign": "狀態文字對齊",
     "mapCluster": "聚合點",
     "mapClusterRadius": "聚合大小 (px)",
@@ -7685,6 +7686,7 @@
       "gauge": "儀表",
       "html": "HTML",
       "markdown": "Markdown",
+      "sunburst": "旭日圖",
       "sankey": "桑基",
       "customChart": "自訂圖表"
     },
@@ -8535,6 +8537,7 @@
     "breakdownTooltipHBar": "使用這些欄位將資料分割為 Y 軸上的不同區段，以獲得更清晰的檢視。",
     "breakdownTooltipDefault": "使用這些欄位將資料分割為 X 軸上的不同區段，以獲得更清晰的檢視。",
     "breakdownTooltipStateTimeline": "此欄位的每個值在時間軸中各自佔一列。",
+    "breakdownTooltipSunburst": "將內環的每個區段拆分為外環，此欄位的每個值對應一個區段。",
     "breakdownTooltipHostmap": "儲存格由這些欄位框定：第一個是外層群組，第二個是內層群組。",
     "hostmapEntity": "實體",
     "hostmapValue": "值",

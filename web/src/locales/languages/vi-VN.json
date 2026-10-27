@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Ẩn ô dưới",
     "heatmapHideBelowTooltip": "Các ô có giá trị nhỏ hơn mức này được để trống.",
+    "sunburstShowLabels": "Hiển thị nhãn",
     "stateValueAlign": "Căn chỉnh văn bản trạng thái",
     "mapCluster": "Gom cụm điểm",
     "mapClusterRadius": "Kích thước cụm (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "Đồng hồ đo",
       "html": "HTML",
       "markdown": "Markdown",
+      "sunburst": "Biểu đồ mặt trời",
       "sankey": "Sankey",
       "customChart": "Biểu đồ tùy chỉnh"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "Sử dụng các trường này để chia dữ liệu thành các phần khác nhau trên trục Y để có cái nhìn rõ ràng hơn.",
     "breakdownTooltipDefault": "Sử dụng các trường này để chia dữ liệu thành các phần khác nhau trên trục X để có cái nhìn rõ ràng hơn.",
     "breakdownTooltipStateTimeline": "Mỗi giá trị của trường này có một hàng riêng trong dòng thời gian.",
+    "breakdownTooltipSunburst": "Chia mỗi đoạn của vòng trong thành một vòng ngoài, mỗi giá trị của trường này là một đoạn.",
     "breakdownTooltipHostmap": "Các ô được phân khung theo các trường này: trường đầu là nhóm ngoài, trường thứ hai là nhóm trong.",
     "hostmapEntity": "Thực thể",
     "hostmapValue": "Giá trị",

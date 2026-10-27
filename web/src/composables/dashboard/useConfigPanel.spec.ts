@@ -19,6 +19,7 @@ import {
   filterOption,
   filterSection,
   shouldShowThresholds,
+  shouldShowSeriesOverrides,
 } from "./useConfigPanel";
 import type { ConfigOption } from "./useConfigPanel";
 import {
@@ -1552,6 +1553,21 @@ describe("useConfigPanel – metric, gauge, pie, table, heatmap, state timeline 
     expect(shouldShowThresholds(table([]))).toBe(false);
     expect(shouldShowThresholds(table([barGauge]))).toBe(true);
     expect(shouldShowThresholds(table([barGauge], "promql"))).toBe(false);
+  });
+});
+
+describe("useConfigPanel – sunburst options", () => {
+  const visible = (type: string, section: any, option: string) =>
+    makeComposable(makePanelData(type, {}), ref(false)).isConfigOptionVisible(section, option);
+
+  it("shows the label switch on sunburst only", () => {
+    expect(visible("sunburst", "data", "sunburst-labels")).toBe(true);
+    expect(visible("pie", "data", "sunburst-labels")).toBe(false);
+  });
+
+  it("shows no thresholds or series overrides on sunburst", () => {
+    expect(shouldShowThresholds({ data: { type: "sunburst", config: {} } })).toBe(false);
+    expect(shouldShowSeriesOverrides({ data: { type: "sunburst" } })).toBe(false);
   });
 });
 

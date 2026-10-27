@@ -543,6 +543,7 @@ mod tests {
             "map_cluster_radius": 60.0
         });
         let rest3 = serde_json::json!({
+            "sunburst_show_labels": false,
             "override_config": [{
                 "field": {"matchBy": "series", "value": "errors"},
                 "config": [

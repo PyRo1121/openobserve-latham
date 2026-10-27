@@ -7417,6 +7417,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Hide cells below",
     "heatmapHideBelowTooltip": "Cells with a value below this are left empty.",
+    "sunburstShowLabels": "Show labels",
     "stateValueAlign": "State text alignment",
     "mapCluster": "Cluster points",
     "mapClusterRadius": "Cluster size (px)",
@@ -7688,6 +7689,7 @@
       "gauge": "Gauge",
       "html": "HTML",
       "markdown": "Markdown",
+      "sunburst": "Sunburst",
       "sankey": "Sankey",
       "customChart": "Custom Chart"
     },
@@ -8538,6 +8540,7 @@
     "breakdownTooltipHBar": "Use these fields to split the data into different sections on the Y axis for a clearer view.",
     "breakdownTooltipDefault": "Use these fields to split the data into different sections on the X axis for a clearer view.",
     "breakdownTooltipStateTimeline": "Each value of this field gets its own row in the timeline.",
+    "breakdownTooltipSunburst": "Splits each inner ring segment into an outer ring, one segment per value of this field.",
     "breakdownTooltipHostmap": "Cells are framed by these fields: the first is the outer group, the second the inner one.",
     "hostmapEntity": "Entity",
     "hostmapValue": "Value",

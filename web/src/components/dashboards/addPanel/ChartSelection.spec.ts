@@ -166,4 +166,19 @@ describe("ChartSelection", () => {
 
     filteredWrapper.unmount();
   });
+
+  it("lists sunburst with its own icon, and disables it on PromQL", async () => {
+    const item = wrapper.find("[data-test='selected-chart-sunburst-item']");
+    expect(item.exists()).toBe(true);
+    expect(item.find("img").attributes("src")).toContain("charts/sunburst.svg");
+    await item.trigger("click");
+    expect(wrapper.emitted()["update:selectedChartType"].at(-1)).toEqual(["sunburst"]);
+    const { dashboardPanelData } = wrapper.vm;
+    const previous = dashboardPanelData.data.queryType;
+    dashboardPanelData.data.queryType = "promql";
+    await flushPromises();
+    const li = wrapper.find("[data-test='selected-chart-sunburst-item']").element.closest("li");
+    expect(li.className.includes("cursor-not-allowed")).toBe(true);
+    dashboardPanelData.data.queryType = previous;
+  });
 });

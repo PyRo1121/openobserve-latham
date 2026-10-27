@@ -570,6 +570,25 @@ describe("usePanelFields", () => {
     });
   });
 
+  describe("sunburst slots", () => {
+    const addMany = (axis: "x" | "y" | "breakdown", count: number) => {
+      for (let i = 0; i < count; i++) {
+        const row = { name: `field_${axis}_${i}` };
+        if (axis === "x") fields.addXAxisItem(row);
+        else if (axis === "y") fields.addYAxisItem(row);
+        else fields.addBreakDownAxisItem(row);
+      }
+      return panelData.data.queries[0].fields[axis].length;
+    };
+
+    it("takes one x, one y and one breakdown field", () => {
+      panelData.data.type = "sunburst";
+      expect(addMany("x", 3)).toBe(1);
+      expect(addMany("y", 3)).toBe(1);
+      expect(addMany("breakdown", 3)).toBe(1);
+    });
+  });
+
   // ── computed: promqlMode ──────────────────────────────────────────────────
 
   describe("promqlMode", () => {

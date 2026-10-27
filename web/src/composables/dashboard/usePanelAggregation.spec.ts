@@ -509,6 +509,47 @@ describe("usePanelAggregation", () => {
       });
     });
 
+    describe("sunburst chart type", () => {
+      const yField = (functionName: string | null) => ({
+        functionName,
+        args: [{ type: "field" }, { type: "extra" }],
+      });
+
+      it("keeps one x, one y counted and one breakdown", () => {
+        const sunburst = makePanelData("sunburst");
+        const ring = sunburst.data.queries[0].fields;
+        ring.x = [{ alias: "x1" }, { alias: "x2" }];
+        ring.y = [yField(null), yField("sum")];
+        ring.breakdown = [{ alias: "b1" }, { alias: "b2" }];
+        makeAggregation(sunburst).resetAggregationFunction();
+        expect(ring.x).toEqual([{ alias: "x1" }]);
+        expect(ring.y.map((item: any) => item.functionName)).toEqual(["count"]);
+        expect(ring.breakdown).toEqual([{ alias: "b1" }]);
+      });
+
+      it("keeps the default count of the timestamp as the size, never a raw field", () => {
+        const sunburst = makePanelData("sunburst");
+        sunburst.meta = {
+          streamFields: {
+            groupedFields: [{ name: "s", schema: [{ name: "bytes", type: "Int64" }] }],
+          },
+        };
+        const ring = sunburst.data.queries[0].fields;
+        ring.y = [
+          {
+            alias: "y_axis_1",
+            column: "_timestamp",
+            functionName: "count",
+            args: [{ type: "field", value: { field: "_timestamp" } }],
+          },
+        ];
+        makeAggregation(sunburst).resetAggregationFunction();
+        expect(ring.y).toHaveLength(1);
+        expect(ring.y[0].functionName).toBe("count");
+        expect(ring.y[0].args[0].value.field).toBe("_timestamp");
+      });
+    });
+
     describe("starter queries", () => {
       it("leaves hand-written SQL in custom mode on a switch to a builder chart", () => {
         const panelData = makePanelData("state-timeline");
