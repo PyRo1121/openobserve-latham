@@ -19,6 +19,7 @@ import {
   filterOption,
   filterSection,
   shouldShowThresholds,
+  shouldShowSeriesOverrides,
 } from "./useConfigPanel";
 import type { ConfigOption } from "./useConfigPanel";
 import {
@@ -1552,6 +1553,23 @@ describe("useConfigPanel – metric, gauge, pie, table, heatmap, state timeline 
     expect(shouldShowThresholds(table([]))).toBe(false);
     expect(shouldShowThresholds(table([barGauge]))).toBe(true);
     expect(shouldShowThresholds(table([barGauge], "promql"))).toBe(false);
+  });
+});
+
+describe("useConfigPanel – funnel options", () => {
+  const visible = (type: string, section: any, option: string) =>
+    makeComposable(makePanelData(type, {}), ref(false)).isConfigOptionVisible(section, option);
+
+  it("shows each option on its own chart type only", () => {
+    for (const option of ["funnel-sort", "funnel-orient", "funnel-show-percent"]) {
+      expect(visible("funnel", "data", option), option).toBe(true);
+      expect(visible("pie", "data", option), option).toBe(false);
+    }
+  });
+
+  it("shows no thresholds or series overrides on a funnel", () => {
+    expect(shouldShowThresholds({ data: { type: "funnel", config: {} } })).toBe(false);
+    expect(shouldShowSeriesOverrides({ data: { type: "funnel" } })).toBe(false);
   });
 });
 

@@ -543,6 +543,9 @@ mod tests {
             "map_cluster_radius": 60.0
         });
         let rest3 = serde_json::json!({
+            "funnel_sort": "none",
+            "funnel_orient": "vertical",
+            "funnel_show_percent": false,
             "override_config": [{
                 "field": {"matchBy": "series", "value": "errors"},
                 "config": [

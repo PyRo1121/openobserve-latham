@@ -1559,6 +1559,28 @@ describe("configUtils", () => {
       expect(shouldShowCartesianAxisConfig(panel)).toBe(false);
     });
   });
+
+  describe("funnel", () => {
+    const panel = {
+      data: {
+        type: "funnel",
+        queries: [{ config: {} }],
+        config: {
+          show_legends: true,
+          legends_position: "right",
+          legends_type: "plain",
+          trellis: { layout: null },
+        },
+      },
+    };
+
+    it("has no axes, gridlines or legend", () => {
+      expect(shouldShowGridlines(panel)).toBe(false);
+      expect(shouldShowLegendsToggle(panel)).toBe(false);
+      expect(shouldShowLegendPosition(panel)).toBe(false);
+      expect(shouldShowAxisConfig(panel)).toBe(false);
+    });
+  });
 });
 
 describe("pruneDependentOptions", () => {

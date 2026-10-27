@@ -1164,6 +1164,7 @@ export default defineComponent({
       switch (dashboardPanelData.data.type) {
         case "pie":
         case "donut":
+        case "funnel":
           return t("dashboard.oneLabelFieldMessage");
         case "metric":
           return t("dashboard.xaxisFieldNAMessage");
@@ -1207,6 +1208,7 @@ export default defineComponent({
         case "pie":
         case "donut":
         case "gauge":
+        case "funnel":
           return t("dashboard.oneValueFieldMessage");
         case "metric":
           return t("dashboard.oneValueFieldMessage");

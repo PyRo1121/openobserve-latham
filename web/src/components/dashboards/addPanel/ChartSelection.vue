@@ -161,6 +161,11 @@ export default defineComponent({
         id: "gauge",
       },
       {
+        image: "img:" + getImageURL("images/dashboard/charts/funnel.svg"),
+        title: t("dashboard.chartSelection.funnel"),
+        id: "funnel",
+      },
+      {
         image: "img:" + getImageURL("images/dashboard/charts/HTML.svg"),
         title: t("dashboard.chartSelection.html"),
         id: "html",

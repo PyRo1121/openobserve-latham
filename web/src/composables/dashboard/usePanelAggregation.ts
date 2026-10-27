@@ -291,6 +291,7 @@ export const usePanelAggregation = ({
       case "pie":
       case "donut":
       case "gauge":
+      case "funnel":
         // we have multiple queries for geomap, so if we are moving away, we need to reset
         // the values of lat, lng and weight in all the queries
         dashboardPanelData.data.queries?.forEach((query: any) => {

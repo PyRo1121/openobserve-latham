@@ -32,6 +32,7 @@ import {
 } from "@/utils/dashboard/panelTypeOptions";
 import { TABLE_DENSITIES, TABLE_FOOTER_CALCS } from "@/utils/dashboard/tableOptions";
 import { SPECIAL_VALUE_MATCHES } from "@/utils/dashboard/tableConfigUtils";
+import { FUNNEL_ORIENTS, FUNNEL_SORTS } from "@/utils/dashboard/convertFunnelData";
 import { HOSTMAP_MAX_GROUP_LEVELS } from "@/utils/dashboard/convertHostmapData";
 import { isGaugeFixedRangeValid, type GaugeQueryConfig } from "@/utils/dashboard/gaugeDial";
 import { MAX_LINE_THICKNESS, isValidLineThickness } from "@/utils/dashboard/promqlChartSeriesProps";
@@ -532,6 +533,23 @@ const validateChartFieldsConfiguration = (
       }
       break;
     }
+    case "funnel": {
+      if (fields?.y?.length !== 1) {
+        const errorMsg =
+          pageKey === "logs"
+            ? t("dashboard.utils.unableToExtractValueField")
+            : t("dashboard.utils.addOneFieldFor", { label: yAxisLabel });
+        errors.push(errorMsg);
+      }
+      if (fields?.x?.length !== 1) {
+        const errorMsg =
+          pageKey === "logs"
+            ? t("dashboard.utils.unableToExtractGroupingField")
+            : t("dashboard.utils.addOneFieldFor", { label: xAxisLabel });
+        errors.push(errorMsg);
+      }
+      break;
+    }
     case "hostmap": {
       if (fields?.y?.length !== 1) {
         const errorMsg =
@@ -927,6 +945,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "h-stacked",
     "heatmap",
     "state-timeline",
+    "funnel",
     "hostmap",
     "metric",
     "gauge",
@@ -1115,6 +1134,8 @@ const PANEL_TYPE_CHOICE_KEYS: ReadonlyArray<[string, string[], readonly unknown[
   ["table_density", ["table"], TABLE_DENSITIES],
   ["state_value_align", ["state-timeline"], STATE_VALUE_ALIGNS],
   ["sort_order", ["pie", "donut"], SORT_ORDERS],
+  ["funnel_sort", ["funnel"], FUNNEL_SORTS],
+  ["funnel_orient", ["funnel"], FUNNEL_ORIENTS],
 ];
 
 const PANEL_TYPE_LIST_KEYS: ReadonlyArray<[string, string[], readonly unknown[]]> = [

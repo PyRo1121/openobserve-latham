@@ -361,6 +361,18 @@ export function useConfigPanel(
         label: [t("dashboard.heatmapCellGap"), t("dashboard.heatmapHideBelow")],
         visible: dashboardPanelData.data.type === "heatmap",
       },
+      "funnel-sort": {
+        label: t("dashboard.funnelSort"),
+        visible: dashboardPanelData.data.type === "funnel",
+      },
+      "funnel-orient": {
+        label: t("dashboard.barGaugeOrientation"),
+        visible: dashboardPanelData.data.type === "funnel",
+      },
+      "funnel-show-percent": {
+        label: t("dashboard.funnelShowPercent"),
+        visible: dashboardPanelData.data.type === "funnel",
+      },
       "heatmap-histogram-mode": {
         label: t("dashboard.heatmapHistogramMode"),
         visible: !!promqlMode.value && dashboardPanelData.data.type === "heatmap",
