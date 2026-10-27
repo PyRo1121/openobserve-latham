@@ -1095,7 +1095,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template #tooltip>
             <OTooltip
               :content="
-                ['metric', 'gauge', 'table'].includes(dashboardPanelData.data.type)
+                ['metric', 'gauge', 'bar-gauge', 'table'].includes(dashboardPanelData.data.type)
                   ? t('dashboard.noValueReplacementTooltipValue')
                   : t('dashboard.noValueReplacementTooltip')
               "
@@ -2651,7 +2651,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- Section: Gauge -->
     <OCollapsible
       variant="config"
-      v-if="dashboardPanelData.data.type === 'gauge'"
+      v-if="['gauge', 'bar-gauge'].includes(dashboardPanelData.data.type)"
       v-show="isSectionVisible('gauge')"
       :model-value="isExpanded('gauge')"
       :icon="SECTION_ICONS.gauge"
@@ -2684,6 +2684,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <template #tooltip>
             <OTooltip :content="t('dashboard.gaugeRangeModeTooltip')" max-width="15.625rem" />
+          </template>
+        </OSelect>
+        <OSelect
+          v-show="isConfigOptionVisible('gauge', 'bar-gauge-range-mode')"
+          v-model="barGaugeRangeModeModel"
+          :options="barGaugeRangeModeOptions"
+          :label="t('dashboard.gaugeRangeMode')"
+          :valueKey="'value'"
+          :labelKey="'label'"
+          data-test="dashboard-config-bar-gauge-range-mode"
+        >
+          <template #tooltip>
+            <OTooltip :content="t('dashboard.barGaugeRangeModeTooltip')" max-width="15.625rem" />
           </template>
         </OSelect>
         <OInput
@@ -2799,6 +2812,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           data-test="dashboard-config-gauge_round_cap"
           size="lg"
           @update:model-value="(value: any) => setFlagConfig('gauge_round_cap', value)"
+        />
+        <OToggleGroup
+          v-show="isConfigOptionVisible('gauge', 'bar-gauge-mode')"
+          type="single"
+          label-position="top"
+          :label="t('dashboard.barGaugeMode')"
+          v-model="barGaugeModeModel"
+          data-test="dashboard-config-bar_gauge_mode"
+          :data-test-selected-value="barGaugeModeModel"
+        >
+          <OToggleGroupItem
+            v-for="opt in barGaugeModeOptions"
+            :key="opt.value"
+            :value="opt.value"
+            size="sm"
+            data-test="dashboard-config-bar_gauge_mode-option"
+            :data-test-label="opt.label"
+            >{{ opt.label }}</OToggleGroupItem
+          >
+        </OToggleGroup>
+        <OToggleGroup
+          v-show="isConfigOptionVisible('gauge', 'bar-gauge-orientation')"
+          type="single"
+          label-position="top"
+          :label="t('dashboard.barGaugeOrientation')"
+          v-model="barGaugeOrientationModel"
+          data-test="dashboard-config-bar_gauge_orientation"
+          :data-test-selected-value="barGaugeOrientationModel"
+        >
+          <OToggleGroupItem
+            v-for="opt in barGaugeOrientationOptions"
+            :key="opt.value"
+            :value="opt.value"
+            size="sm"
+            data-test="dashboard-config-bar_gauge_orientation-option"
+            :data-test-label="opt.label"
+            >{{ opt.label }}</OToggleGroupItem
+          >
+        </OToggleGroup>
+        <OSwitch
+          v-show="isConfigOptionVisible('gauge', 'bar-gauge-show-unfilled')"
+          :model-value="dashboardPanelData.data.config.bar_gauge_show_unfilled !== false"
+          :label="t('dashboard.barGaugeShowUnfilled')"
+          data-test="dashboard-config-bar_gauge_show_unfilled"
+          size="lg"
+          @update:model-value="(value: any) => setDefaultOnFlag('bar_gauge_show_unfilled', value)"
         />
       </div>
     </OCollapsible>
@@ -3325,6 +3384,7 @@ import {
   STAT_TEXT_MODES,
 } from "@/utils/dashboard/metricOptions";
 import { GAUGE_STYLES, STATE_VALUE_ALIGNS } from "@/utils/dashboard/panelTypeOptions";
+import { BAR_GAUGE_MODES, BAR_GAUGE_ORIENTATIONS } from "@/utils/dashboard/convertBarGaugeData";
 import {
   DISTRIBUTION_ROW_LIMIT,
   isRawValueChart,
@@ -3749,6 +3809,38 @@ export default defineComponent({
       { label: t("dashboard.gaugeStyleSemi"), value: "semi" },
       { label: t("dashboard.gaugeStyleArc"), value: "arc" },
       { label: t("dashboard.gaugeStyleCircle"), value: "circle" },
+    ];
+    const barGaugeModeModel = choiceModel("bar_gauge_mode", BAR_GAUGE_MODES);
+    const barGaugeModeOptions: { label: I18nText; value: string }[] = [
+      defaultOption,
+      { label: t("dashboard.barGaugeModeGradient"), value: "gradient" },
+      { label: t("dashboard.barGaugeModeLcd"), value: "lcd" },
+      { label: t("dashboard.barGaugeModeBasic"), value: "basic" },
+    ];
+    // The range mode lives on the query config; Default drops it so the bar gauge scales to its data.
+    const barGaugeRangeModeModel = computed({
+      get: (): string => {
+        const query = dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex];
+        return ["fixed", "auto"].includes(query?.config?.range_mode)
+          ? query.config.range_mode
+          : TOGGLE_AUTO;
+      },
+      set: (v: string) => {
+        const query = dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex];
+        if (["fixed", "auto"].includes(v)) query.config.range_mode = v;
+        else delete query.config.range_mode;
+      },
+    });
+    const barGaugeRangeModeOptions: { label: I18nText; value: string }[] = [
+      defaultOption,
+      { label: t("dashboard.gaugeRangeModeFixed"), value: "fixed" },
+      { label: t("dashboard.gaugeRangeModeAuto"), value: "auto" },
+    ];
+    const barGaugeOrientationModel = choiceModel("bar_gauge_orientation", BAR_GAUGE_ORIENTATIONS);
+    const barGaugeOrientationOptions: { label: I18nText; value: string }[] = [
+      defaultOption,
+      { label: t("dashboard.barGaugeOrientationHorizontal"), value: "horizontal" },
+      { label: t("dashboard.barGaugeOrientationVertical"), value: "vertical" },
     ];
     // Absent, the converters label SQL slices by percent and PromQL slices by all three, so the picker starts there.
     const pieLabelContentDefault = () =>
@@ -4514,6 +4606,7 @@ export default defineComponent({
         "pie",
         "donut",
         "gauge",
+        "bar-gauge",
         "sankey",
         "hostmap",
       ].includes(dashboardPanelData.data.type);
@@ -4867,6 +4960,12 @@ export default defineComponent({
       statTextModeOptions,
       gaugeStyleModel,
       gaugeStyleOptions,
+      barGaugeModeModel,
+      barGaugeModeOptions,
+      barGaugeRangeModeModel,
+      barGaugeRangeModeOptions,
+      barGaugeOrientationModel,
+      barGaugeOrientationOptions,
       pieLabelContentModel,
       pieLabelContentIsDefault,
       setPieLabelContent,

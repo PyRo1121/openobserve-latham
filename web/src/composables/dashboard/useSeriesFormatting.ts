@@ -236,6 +236,8 @@ export const getLegendSeriesNames = (options: any, chartType: string, extras?: a
     names = (series[0]?.data ?? []).map((item: any) => item?.name);
   } else if (chartType === "gauge") {
     names = series.map((s: any) => s?.data?.[0]?.name);
+  } else if (chartType === "bar-gauge") {
+    names = (series[series.length - 1]?.data ?? []).map((item: any) => item?.name);
   } else if (isRowTimeline(chartType)) {
     names = extras?.rowEntities ?? [];
   } else if (chartType === "metric") {

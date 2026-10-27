@@ -32,6 +32,7 @@ import {
 } from "@/utils/dashboard/panelTypeOptions";
 import { TABLE_DENSITIES, TABLE_FOOTER_CALCS } from "@/utils/dashboard/tableOptions";
 import { SPECIAL_VALUE_MATCHES } from "@/utils/dashboard/tableConfigUtils";
+import { BAR_GAUGE_MODES, BAR_GAUGE_ORIENTATIONS } from "@/utils/dashboard/convertBarGaugeData";
 import { HOSTMAP_MAX_GROUP_LEVELS } from "@/utils/dashboard/convertHostmapData";
 import { isGaugeFixedRangeValid, type GaugeQueryConfig } from "@/utils/dashboard/gaugeDial";
 import { MAX_LINE_THICKNESS, isValidLineThickness } from "@/utils/dashboard/promqlChartSeriesProps";
@@ -436,7 +437,8 @@ const validateChartFieldsConfiguration = (
       }
       break;
     }
-    case "gauge": {
+    case "gauge":
+    case "bar-gauge": {
       if (fields?.y?.length !== 1) {
         const errorMsg =
           pageKey === "logs"
@@ -930,6 +932,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "hostmap",
     "metric",
     "gauge",
+    "bar-gauge",
     "geomap",
     "maps",
     "table",
@@ -1114,6 +1117,8 @@ const PANEL_TYPE_CHOICE_KEYS: ReadonlyArray<[string, string[], readonly unknown[
   ["gauge_style", ["gauge"], GAUGE_STYLES],
   ["table_density", ["table"], TABLE_DENSITIES],
   ["state_value_align", ["state-timeline"], STATE_VALUE_ALIGNS],
+  ["bar_gauge_mode", ["bar-gauge"], BAR_GAUGE_MODES],
+  ["bar_gauge_orientation", ["bar-gauge"], BAR_GAUGE_ORIENTATIONS],
   ["sort_order", ["pie", "donut"], SORT_ORDERS],
 ];
 
@@ -1285,6 +1290,7 @@ export const validatePanel = (
       "maps",
       "heatmap",
       "state-timeline",
+      "bar-gauge",
       "hostmap",
       "geomap",
       "donut",

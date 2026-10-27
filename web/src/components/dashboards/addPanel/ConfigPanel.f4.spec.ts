@@ -162,6 +162,59 @@ describe("ConfigPanel chart type settings", { timeout: 30_000 }, () => {
     await flushPromises();
   };
 
+  it("mounting a bar gauge writes none of the new keys", async () => {
+    const panel = mountPanel("bar-gauge");
+    const before = JSON.stringify(panel.data.config);
+    await flushPromises();
+    expect(JSON.stringify(panel.data.config)).toBe(before);
+  });
+
+  it("bar gauge: scales to its data by default and shows min and max only once Fixed is picked", async () => {
+    const panel = mountPanel("bar-gauge");
+    await flushPromises();
+    const rangeMode = wrapper!
+      .findAllComponents({ name: "OSelect" })
+      .find((c: any) => c.attributes("data-test") === "dashboard-config-bar-gauge-range-mode");
+    expect(rangeMode, "range mode select").toBeTruthy();
+    expect(isShown("dashboard-config-bar-gauge-range-mode")).toBe(true);
+    expect(isShown("dashboard-config-gauge-range-mode")).toBe(false);
+    expect(isShown("dashboard-config-gauge-max")).toBe(false);
+    rangeMode!.vm.$emit("update:modelValue", "fixed");
+    await flushPromises();
+    expect(panel.data.queries[0].config.range_mode).toBe("fixed");
+    expect(isShown("dashboard-config-gauge-min")).toBe(true);
+    expect(isShown("dashboard-config-gauge-max")).toBe(true);
+    rangeMode!.vm.$emit("update:modelValue", "__auto__");
+    await flushPromises();
+    expect("range_mode" in panel.data.queries[0].config).toBe(false);
+    expect(isShown("dashboard-config-gauge-max")).toBe(false);
+  });
+
+  it("bar gauge: writes its own mode, orientation and unfilled keys", async () => {
+    const panel = mountPanel("bar-gauge");
+    await flushPromises();
+    expect(isShown("dashboard-config-gauge_style")).toBe(false);
+    expect(isShown("dashboard-config-gauge_round_cap")).toBe(false);
+    await pick("dashboard-config-bar_gauge_mode", "Retro LCD");
+    await pick("dashboard-config-bar_gauge_orientation", "Vertical");
+    await emitSwitch("dashboard-config-bar_gauge_show_unfilled", false);
+    expect(panel.data.config).toMatchObject({
+      bar_gauge_mode: "lcd",
+      bar_gauge_orientation: "vertical",
+      bar_gauge_show_unfilled: false,
+    });
+    await emitSwitch("dashboard-config-bar_gauge_show_unfilled", true);
+    expect("bar_gauge_show_unfilled" in panel.data.config).toBe(false);
+  });
+
+  it("gauge: hides the bar gauge controls", async () => {
+    mountPanel("gauge");
+    await flushPromises();
+    expect(isShown("dashboard-config-gauge_style")).toBe(true);
+    expect(isShown("dashboard-config-bar_gauge_mode")).toBe(false);
+    expect(isShown("dashboard-config-bar_gauge_show_unfilled")).toBe(false);
+  });
+
   it("state timeline: keeps its own controls and writes the value alignment", async () => {
     const panel = mountPanel("state-timeline");
     await flushPromises();
