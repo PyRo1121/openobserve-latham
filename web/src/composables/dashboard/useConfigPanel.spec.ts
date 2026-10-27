@@ -1555,6 +1555,16 @@ describe("useConfigPanel – metric, gauge, pie, table, heatmap, state timeline 
   });
 });
 
+describe("useConfigPanel – distribution options", () => {
+  const visible = (type: string, section: any, option: string) =>
+    makeComposable(makePanelData(type, {}), ref(false)).isConfigOptionVisible(section, option);
+
+  it("shows the bucket settings on distribution only", () => {
+    expect(visible("distribution", "data", "distribution-buckets")).toBe(true);
+    expect(visible("heatmap", "data", "distribution-buckets")).toBe(false);
+  });
+});
+
 describe("useConfigPanel – sparkline search visibility", () => {
   it("drops the sparkline option for an all-instant PromQL metric only", async () => {
     const { allVisibleQueriesInstant } = await import("@/utils/dashboard/configUtils");

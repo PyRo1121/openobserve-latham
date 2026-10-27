@@ -177,6 +177,11 @@ export const buildDefaultBuilderFields = (
   if (chartType === "metric") return { x: [], y };
   // A count is not a state; the user picks the state column.
   if (chartType === "state-timeline") return { x, y: [] };
+  // A histogram summarises raw values, so it starts from a numeric column, never a count or the timestamp.
+  if (chartType === "distribution") {
+    const column = firstNumericField(groupedFields, streamName, timestampColumn);
+    return { x: [], y: column ? [rawValueYField(column)] : [] };
+  }
   // A time bucket is not an entity; the user picks the entity field.
   if (chartType === "hostmap") return { x: [], y };
   return { x, y };

@@ -32,6 +32,7 @@ import { applyPanelTypeOptions } from "./panelTypeOptions";
 import { applyMetricOptions, isStatChangeOn, splitStatChangeResults } from "./metricOptions";
 import { applyGeoMapClusters, mapClusterRadius } from "./geoMapCluster";
 import { applyTableOptions } from "./tableOptions";
+import { convertDistributionData } from "./convertDistributionData";
 import { convertHostmapData } from "./convertHostmapData";
 /**
  * Converts panel data based on the panel schema and data.
@@ -158,6 +159,12 @@ export const convertPanelData = async (
         console.error(error);
         return {};
       }
+    }
+    case "distribution": {
+      return {
+        chartType: panelSchema.type,
+        ...convertDistributionData(panelSchema, data, store),
+      };
     }
     case "table": {
       // Check if PromQL query type
