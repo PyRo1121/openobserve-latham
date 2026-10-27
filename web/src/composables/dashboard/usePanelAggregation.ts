@@ -26,6 +26,9 @@ import {
 // Types that reset their own queries on a switch, so no builder state carries into them.
 const NON_BUILDER_TYPES = ["html", "markdown", "custom_chart"];
 
+// The SQL each custom-SQL panel type starts from, keyed by panel type.
+const STARTER_QUERIES: Record<string, (stream: string, timestampColumn: string) => string> = {};
+
 const STARTER_QUERY_PATTERNS: RegExp[] = [];
 
 /** Whether `text` is still the untouched starter SQL a panel was seeded with. */
@@ -54,6 +57,23 @@ export const usePanelAggregation = ({
   getDefaultCustomChartText: () => string;
   getTimestampColumn?: () => string;
 }) => {
+  // Keeps the chosen stream across the reset, as the html and markdown switches do.
+  const resetToSingleQuery = () => {
+    const current = dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex];
+    const stream = current?.fields?.stream;
+    const streamType = current?.fields?.stream_type;
+    dashboardPanelData.data.queries = getDefaultQueries();
+    dashboardPanelData.layout.currentQueryIndex = 0;
+    const query = dashboardPanelData.data.queries[0];
+    query.fields.stream = stream;
+    query.fields.stream_type = streamType;
+    query.config.time_shift = [];
+    dashboardPanelData.data.htmlContent = "";
+    dashboardPanelData.data.markdownContent = "";
+    dashboardPanelData.data.customChartContent = getDefaultCustomChartText();
+    return query;
+  };
+
   // An untouched starter is not the user's SQL, so a builder chart takes the query back.
   const returnStartersToBuilder = () => {
     dashboardPanelData.data.queries?.forEach((query: any) => {
@@ -71,6 +91,30 @@ export const usePanelAggregation = ({
       query.fields.x = x;
       query.fields.y = y;
     });
+  };
+
+  // A hand-written query survives a switch to a custom-SQL panel; anything else gets that type's starter.
+  const seedCustomSqlPanel = () => {
+    const current = dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex];
+    const typed =
+      dashboardPanelData.data.queryType === "sql" &&
+      current?.customQuery &&
+      (current.query ?? "").trim() !== "" &&
+      !isPanelStarterQuery(current.query)
+        ? current.query
+        : null;
+    const query = resetToSingleQuery();
+    query.customQuery = true;
+    query.query =
+      typed ??
+      STARTER_QUERIES[dashboardPanelData.data.type]?.(
+        query.fields.stream ?? "",
+        getTimestampColumn(),
+      ) ??
+      "";
+    dashboardPanelData.data.queryType = "sql";
+    // The builder is hidden for these types, so the SQL editor is where the panel is built.
+    dashboardPanelData.layout.showQueryBar = true;
   };
 
   const resetAggregationFunction = () => {
@@ -498,6 +542,8 @@ export const usePanelAggregation = ({
         ].config.time_shift = [];
         break;
       default:
+        // Custom-SQL panels read raw rows of a hand-written query the builder cannot express.
+        if (isCustomSqlPanel(type)) seedCustomSqlPanel();
         break;
     }
 
