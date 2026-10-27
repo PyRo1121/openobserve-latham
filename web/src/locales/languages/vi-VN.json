@@ -6625,6 +6625,7 @@
     "heatmapLabel": "Bản đồ nhiệt",
     "stateTimelineLabel": "Dòng thời gian trạng thái",
     "configSectionStateTimeline": "Dòng thời gian trạng thái",
+    "configSectionStatusHistory": "Lịch sử trạng thái",
     "hostmapLabel": "Bản đồ máy chủ",
     "configSectionHostmap": "Bản đồ máy chủ",
     "hostmapEntityLabel": "Nhãn thực thể",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "Ẩn ô dưới",
     "heatmapHideBelowTooltip": "Các ô có giá trị nhỏ hơn mức này được để trống.",
     "stateValueAlign": "Căn chỉnh văn bản trạng thái",
+    "statusHistoryShowValues": "Hiển thị giá trị",
     "mapCluster": "Gom cụm điểm",
     "mapClusterRadius": "Kích thước cụm (px)",
     "mapClusterRadiusTooltip": "Các điểm gần nhau hơn khoảng này trên màn hình được gộp thành một bong bóng hiển thị số lượng.",
@@ -7690,6 +7692,7 @@
       "gauge": "Đồng hồ đo",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "Lịch sử trạng thái",
       "sankey": "Sankey",
       "customChart": "Biểu đồ tùy chỉnh"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "Nhóm",
     "wellSubgroup": "Nhóm con",
     "wellSize": "Kích thước",
+    "wellTime": "Thời gian",
+    "wellRow": "Hàng",
     "value": "Giá trị"
   },
   "home": {

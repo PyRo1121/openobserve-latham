@@ -6625,6 +6625,7 @@
     "heatmapLabel": "Heatmap",
     "stateTimelineLabel": "State timeline",
     "configSectionStateTimeline": "State timeline",
+    "configSectionStatusHistory": "Status history",
     "hostmapLabel": "Host map",
     "configSectionHostmap": "Host map",
     "hostmapEntityLabel": "Entity label",
@@ -7418,6 +7419,7 @@
     "heatmapHideBelow": "Hide cells below",
     "heatmapHideBelowTooltip": "Cells with a value below this are left empty.",
     "stateValueAlign": "State text alignment",
+    "statusHistoryShowValues": "Show values",
     "mapCluster": "Cluster points",
     "mapClusterRadius": "Cluster size (px)",
     "mapClusterRadiusTooltip": "Points closer than this on screen are merged into one bubble that shows their count.",
@@ -7688,6 +7690,7 @@
       "gauge": "Gauge",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "Status history",
       "sankey": "Sankey",
       "customChart": "Custom Chart"
     },
@@ -8633,6 +8636,8 @@
     "wellGroup": "Group",
     "wellSubgroup": "Sub-group",
     "wellSize": "Size",
+    "wellTime": "Time",
+    "wellRow": "Row",
     "value": "Value"
   },
   "home": {

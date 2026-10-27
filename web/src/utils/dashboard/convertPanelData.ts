@@ -253,7 +253,8 @@ export const convertPanelData = async (
         ...convertSankeyData(panelSchema, data),
       };
     }
-    case "state-timeline": {
+    case "state-timeline":
+    case "status-history": {
       return {
         chartType: panelSchema.type,
         ...convertStateTimelineData(

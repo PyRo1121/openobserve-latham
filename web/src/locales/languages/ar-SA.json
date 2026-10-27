@@ -6625,6 +6625,7 @@
     "heatmapLabel": "خريطة الحرارة",
     "stateTimelineLabel": "الخط الزمني للحالة",
     "configSectionStateTimeline": "الخط الزمني للحالة",
+    "configSectionStatusHistory": "سجل الحالة",
     "hostmapLabel": "خريطة المضيفين",
     "configSectionHostmap": "خريطة المضيفين",
     "hostmapEntityLabel": "تسمية الكيان",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "إخفاء الخلايا الأقل من",
     "heatmapHideBelowTooltip": "تبقى الخلايا ذات القيمة الأقل من ذلك فارغة.",
     "stateValueAlign": "محاذاة نص الحالة",
+    "statusHistoryShowValues": "إظهار القيم",
     "mapCluster": "تجميع النقاط",
     "mapClusterRadius": "حجم المجموعة (px)",
     "mapClusterRadiusTooltip": "تُدمج النقاط الأقرب من هذه المسافة على الشاشة في فقاعة واحدة تعرض عددها.",
@@ -7690,6 +7692,7 @@
       "gauge": "المقياس",
       "html": "HTML",
       "markdown": "ماركداون",
+      "statusHistory": "سجل الحالة",
       "sankey": "سانكي",
       "customChart": "المخطط المخصص"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "المجموعة",
     "wellSubgroup": "المجموعة الفرعية",
     "wellSize": "الحجم",
+    "wellTime": "الوقت",
+    "wellRow": "الصف",
     "value": "القيمة"
   },
   "home": {

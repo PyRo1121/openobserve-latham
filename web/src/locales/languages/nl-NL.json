@@ -6625,6 +6625,7 @@
     "heatmapLabel": "Heatmap",
     "stateTimelineLabel": "Statustijdlijn",
     "configSectionStateTimeline": "Statustijdlijn",
+    "configSectionStatusHistory": "Statusgeschiedenis",
     "hostmapLabel": "Hostmap",
     "configSectionHostmap": "Hostmap",
     "hostmapEntityLabel": "Entiteitslabel",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "Cellen verbergen onder",
     "heatmapHideBelowTooltip": "Cellen met een lagere waarde blijven leeg.",
     "stateValueAlign": "Uitlijning van statustekst",
+    "statusHistoryShowValues": "Waarden tonen",
     "mapCluster": "Punten clusteren",
     "mapClusterRadius": "Clustergrootte (px)",
     "mapClusterRadiusTooltip": "Punten die op het scherm dichter bij elkaar liggen, worden samengevoegd tot één bel met hun aantal.",
@@ -7690,6 +7692,7 @@
       "gauge": "Meter",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "Statusgeschiedenis",
       "sankey": "Sankey",
       "customChart": "Aangepaste grafiek"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "Groep",
     "wellSubgroup": "Subgroep",
     "wellSize": "Grootte",
+    "wellTime": "Tijd",
+    "wellRow": "Rij",
     "value": "Waarde"
   },
   "home": {

@@ -515,7 +515,8 @@ const validateChartFieldsConfiguration = (
       }
       break;
     }
-    case "state-timeline": {
+    case "state-timeline":
+    case "status-history": {
       if (fields?.y?.length !== 1) {
         const errorMsg =
           pageKey === "logs"
@@ -927,6 +928,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "h-stacked",
     "heatmap",
     "state-timeline",
+    "status-history",
     "hostmap",
     "metric",
     "gauge",
@@ -1113,7 +1115,7 @@ const PANEL_TYPE_CHOICE_KEYS: ReadonlyArray<[string, string[], readonly unknown[
   ["stat_text_mode", ["metric"], STAT_TEXT_MODES],
   ["gauge_style", ["gauge"], GAUGE_STYLES],
   ["table_density", ["table"], TABLE_DENSITIES],
-  ["state_value_align", ["state-timeline"], STATE_VALUE_ALIGNS],
+  ["state_value_align", ["state-timeline", "status-history"], STATE_VALUE_ALIGNS],
   ["sort_order", ["pie", "donut"], SORT_ORDERS],
 ];
 
@@ -1285,6 +1287,7 @@ export const validatePanel = (
       "maps",
       "heatmap",
       "state-timeline",
+      "status-history",
       "hostmap",
       "geomap",
       "donut",

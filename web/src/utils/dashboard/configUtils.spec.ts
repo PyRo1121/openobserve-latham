@@ -1559,6 +1559,34 @@ describe("configUtils", () => {
       expect(shouldShowCartesianAxisConfig(panel)).toBe(false);
     });
   });
+
+  describe("status history", () => {
+    const panel = {
+      data: {
+        type: "status-history",
+        queries: [{ config: {} }],
+        config: {
+          show_legends: true,
+          legends_position: "right",
+          legends_type: "plain",
+          trellis: { layout: null },
+        },
+      },
+    };
+
+    it("keeps the legend toggle and gridlines but not legend placement or axis width", () => {
+      expect(shouldShowGridlines(panel)).toBe(true);
+      expect(shouldShowLegendsToggle(panel)).toBe(true);
+      expect(shouldShowLegendPosition(panel)).toBe(false);
+      expect(shouldShowLegendType(panel)).toBe(false);
+      expect(shouldShowLegendWidth(panel)).toBe(false);
+      expect(shouldShowAxisConfig(panel)).toBe(false);
+    });
+
+    it("always runs a range query", () => {
+      expect(shouldShowPromQLQueryType(panel)).toBe(false);
+    });
+  });
 });
 
 describe("pruneDependentOptions", () => {

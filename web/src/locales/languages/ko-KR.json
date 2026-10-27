@@ -6625,6 +6625,7 @@
     "heatmapLabel": "히트맵",
     "stateTimelineLabel": "상태 타임라인",
     "configSectionStateTimeline": "상태 타임라인",
+    "configSectionStatusHistory": "상태 기록",
     "hostmapLabel": "호스트 맵",
     "configSectionHostmap": "호스트 맵",
     "hostmapEntityLabel": "엔티티 레이블",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "다음 값 미만 셀 숨기기",
     "heatmapHideBelowTooltip": "이보다 작은 값의 셀은 비워 둡니다.",
     "stateValueAlign": "상태 텍스트 정렬",
+    "statusHistoryShowValues": "값 표시",
     "mapCluster": "포인트 클러스터링",
     "mapClusterRadius": "클러스터 크기 (px)",
     "mapClusterRadiusTooltip": "화면에서 이보다 가까운 포인트는 개수를 보여 주는 하나의 버블로 합쳐집니다.",
@@ -7690,6 +7692,7 @@
       "gauge": "게이지",
       "html": "HTML",
       "markdown": "마크다운",
+      "statusHistory": "상태 기록",
       "sankey": "생키",
       "customChart": "사용자 정의 차트"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "그룹",
     "wellSubgroup": "하위 그룹",
     "wellSize": "크기",
+    "wellTime": "시간",
+    "wellRow": "행",
     "value": "값"
   },
   "home": {

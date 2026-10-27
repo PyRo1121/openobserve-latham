@@ -19,6 +19,7 @@ import {
   filterOption,
   filterSection,
   shouldShowThresholds,
+  shouldShowSeriesOverrides,
 } from "./useConfigPanel";
 import type { ConfigOption } from "./useConfigPanel";
 import {
@@ -1552,6 +1553,23 @@ describe("useConfigPanel – metric, gauge, pie, table, heatmap, state timeline 
     expect(shouldShowThresholds(table([]))).toBe(false);
     expect(shouldShowThresholds(table([barGauge]))).toBe(true);
     expect(shouldShowThresholds(table([barGauge], "promql"))).toBe(false);
+  });
+});
+
+describe("useConfigPanel – status history options", () => {
+  const visible = (type: string, section: any, option: string) =>
+    makeComposable(makePanelData(type, {}), ref(false)).isConfigOptionVisible(section, option);
+
+  it("shows show values and the shared row settings only on status history", () => {
+    expect(visible("status-history", "stateTimeline", "status-history-show-values")).toBe(true);
+    expect(visible("status-history", "stateTimeline", "row-sort")).toBe(true);
+    expect(visible("status-history", "stateTimeline", "merge-gaps")).toBe(false);
+    expect(visible("state-timeline", "stateTimeline", "status-history-show-values")).toBe(false);
+  });
+
+  it("shows thresholds and series overrides on status history", () => {
+    expect(shouldShowThresholds({ data: { type: "status-history", config: {} } })).toBe(true);
+    expect(shouldShowSeriesOverrides({ data: { type: "status-history" } })).toBe(true);
   });
 });
 

@@ -6625,6 +6625,7 @@
     "heatmapLabel": "热力图",
     "stateTimelineLabel": "状态时间线",
     "configSectionStateTimeline": "状态时间线",
+    "configSectionStatusHistory": "状态历史",
     "hostmapLabel": "主机地图",
     "configSectionHostmap": "主机地图",
     "hostmapEntityLabel": "实体标签",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "隐藏低于此值的单元格",
     "heatmapHideBelowTooltip": "值低于此值的单元格保持空白。",
     "stateValueAlign": "状态文本对齐",
+    "statusHistoryShowValues": "显示数值",
     "mapCluster": "聚合点",
     "mapClusterRadius": "聚合大小 (px)",
     "mapClusterRadiusTooltip": "屏幕上距离小于此值的点会合并为一个显示数量的气泡。",
@@ -7690,6 +7692,7 @@
       "gauge": "仪表",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "状态历史",
       "sankey": "桑基图",
       "customChart": "自定义图表"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "分组",
     "wellSubgroup": "子分组",
     "wellSize": "大小",
+    "wellTime": "时间",
+    "wellRow": "行",
     "value": "值"
   },
   "home": {

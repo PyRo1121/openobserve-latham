@@ -6625,6 +6625,7 @@
     "heatmapLabel": "ヒートマップ",
     "stateTimelineLabel": "ステートタイムライン",
     "configSectionStateTimeline": "ステートタイムライン",
+    "configSectionStatusHistory": "ステータス履歴",
     "hostmapLabel": "ホストマップ",
     "configSectionHostmap": "ホストマップ",
     "hostmapEntityLabel": "エンティティラベル",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "次の値未満のセルを非表示",
     "heatmapHideBelowTooltip": "これより小さい値のセルは空白になります。",
     "stateValueAlign": "状態テキストの配置",
+    "statusHistoryShowValues": "値を表示",
     "mapCluster": "ポイントをクラスター化",
     "mapClusterRadius": "クラスターのサイズ (px)",
     "mapClusterRadiusTooltip": "画面上でこれより近いポイントは、件数を表示する 1 つのバブルにまとめられます。",
@@ -7690,6 +7692,7 @@
       "gauge": "ゲージ",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "ステータス履歴",
       "sankey": "Sankey図",
       "customChart": "カスタムチャート"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "グループ",
     "wellSubgroup": "サブグループ",
     "wellSize": "サイズ",
+    "wellTime": "時間",
+    "wellRow": "行",
     "value": "値"
   },
   "home": {

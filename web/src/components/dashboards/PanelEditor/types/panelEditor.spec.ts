@@ -321,6 +321,7 @@ describe("panelEditor types and utilities", () => {
         expect(ALL_CHART_TYPES).toContain("custom_chart");
         expect(ALL_CHART_TYPES).toContain("state-timeline");
         expect(ALL_CHART_TYPES).toContain("hostmap");
+        expect(ALL_CHART_TYPES).toContain("status-history");
       });
 
       it("lists each chart type once", () => {
@@ -365,6 +366,10 @@ describe("panelEditor types and utilities", () => {
 
       it("should not contain custom_chart type", () => {
         expect(AGGREGATION_REQUIRED_CHART_TYPES).not.toContain("custom_chart");
+      });
+
+      it("requires aggregation for status history", () => {
+        expect(AGGREGATION_REQUIRED_CHART_TYPES).toContain("status-history");
       });
 
       it("lists each chart type once", () => {

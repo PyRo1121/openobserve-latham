@@ -6625,6 +6625,7 @@
     "heatmapLabel": "Isı haritası",
     "stateTimelineLabel": "Durum zaman çizelgesi",
     "configSectionStateTimeline": "Durum zaman çizelgesi",
+    "configSectionStatusHistory": "Durum geçmişi",
     "hostmapLabel": "Ana bilgisayar haritası",
     "configSectionHostmap": "Ana bilgisayar haritası",
     "hostmapEntityLabel": "Varlık etiketi",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "Şunun altındaki hücreleri gizle",
     "heatmapHideBelowTooltip": "Değeri bundan küçük olan hücreler boş bırakılır.",
     "stateValueAlign": "Durum metni hizalaması",
+    "statusHistoryShowValues": "Değerleri göster",
     "mapCluster": "Noktaları kümele",
     "mapClusterRadius": "Küme boyutu (px)",
     "mapClusterRadiusTooltip": "Ekranda bundan daha yakın olan noktalar, sayılarını gösteren tek bir baloncukta birleştirilir.",
@@ -7690,6 +7692,7 @@
       "gauge": "Gösterge",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "Durum geçmişi",
       "sankey": "Sankey",
       "customChart": "Özel Grafik"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "Grup",
     "wellSubgroup": "Alt grup",
     "wellSize": "Boyut",
+    "wellTime": "Zaman",
+    "wellRow": "Satır",
     "value": "Değer"
   },
   "home": {

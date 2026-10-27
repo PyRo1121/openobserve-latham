@@ -213,6 +213,7 @@ export const usePanelAggregation = ({
       case "stacked":
       case "h-stacked":
       case "state-timeline":
+      case "status-history":
         // we have multiple queries for geomap, so if we are moving away, we need to reset
         // the values of lat, lng and weight in all the queries
         dashboardPanelData.data.queries?.forEach((query: any) => {
@@ -223,6 +224,19 @@ export const usePanelAggregation = ({
             query.fields.y = query.fields.y
               .filter((itemY: any) => itemY.functionName !== "count")
               .slice(0, 1);
+          }
+          if (dashboardPanelData.data.type === "status-history") {
+            query.fields.y = query.fields.y.slice(0, 1);
+            // A state timeline drops count fields, so a status history reached through one gets its default value back.
+            if (!query.fields.y.length && !query.customQuery) {
+              query.fields.y = buildDefaultBuilderFields(
+                "status-history",
+                query.fields.stream_type,
+                dashboardPanelData.meta?.streamFields?.groupedFields ?? [],
+                query.fields.stream,
+                getTimestampColumn(),
+              ).y;
+            }
           }
           query.fields.y.forEach((itemY: any) => {
             if (itemY.functionName === null && !itemY.isDerived) {

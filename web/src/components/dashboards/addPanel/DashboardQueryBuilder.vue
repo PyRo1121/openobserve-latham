@@ -178,6 +178,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           dashboardPanelData.data.type == 'area-stacked' ||
           dashboardPanelData.data.type == 'stacked' ||
           dashboardPanelData.data.type == 'state-timeline' ||
+          dashboardPanelData.data.type == 'status-history' ||
           dashboardPanelData.data.type == 'hostmap'
         "
       >
@@ -206,9 +207,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   "
                   >{{ t("panel.breakdownTooltipHBar") }}</span
                 >
-                <span v-else-if="dashboardPanelData.data.type == 'state-timeline'">{{
-                  t("panel.breakdownTooltipStateTimeline")
-                }}</span>
+                <span
+                  v-else-if="
+                    dashboardPanelData.data.type == 'state-timeline' ||
+                    dashboardPanelData.data.type == 'status-history'
+                  "
+                  >{{ t("panel.breakdownTooltipStateTimeline") }}</span
+                >
                 <span v-else-if="dashboardPanelData.data.type == 'hostmap'">{{
                   t("panel.breakdownTooltipHostmap")
                 }}</span>
@@ -770,6 +775,8 @@ export default defineComponent({
     // Hierarchy, row and category charts name each well by its job, as the sankey builder does.
     const roleLabels = computed((): { x: string; y: string; b: string | null } | null => {
       switch (dashboardPanelData.data.type) {
+        case "status-history":
+          return { x: t("panel.wellTime"), y: t("panel.value"), b: t("panel.wellRow") };
         default:
           return null;
       }
@@ -1181,6 +1188,7 @@ export default defineComponent({
         case "heatmap":
         case "state-timeline":
         case "hostmap":
+        case "status-history":
           return t("dashboard.oneFieldMessage");
         case "gauge":
           return t("dashboard.dashboardQueryBuilder.addZeroOrOneLabelField");
@@ -1212,6 +1220,7 @@ export default defineComponent({
           return t("dashboard.oneValueFieldMessage");
         case "heatmap":
         case "state-timeline":
+        case "status-history":
         case "hostmap":
           return t("dashboard.oneFieldMessage");
         default:

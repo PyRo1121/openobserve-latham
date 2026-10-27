@@ -217,6 +217,8 @@ const i18n = createI18n({
         wellGroup: "Group",
         wellSubgroup: "Sub-group",
         wellSize: "Size",
+        wellTime: "Time",
+        wellRow: "Row",
         joins: "Joins",
         addJoin: "Add Join",
       },
@@ -559,6 +561,7 @@ describe("DashboardQueryBuilder", () => {
           wrapper.vm.currentBreakdownLabel,
         ];
       };
+      expect(wells("status-history")).toEqual(["Time", "Value", "Row"]);
       expect(wells("bar")).toEqual(["X-Axis", "Y-Axis", "Breakdown"]);
       expect(wells("h-bar")).toEqual(["Y-Axis", "X-Axis", "Breakdown"]);
     });

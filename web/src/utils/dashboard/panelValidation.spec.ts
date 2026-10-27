@@ -864,3 +864,78 @@ describe("validatePanel bar width", () => {
     expect(run("stacked", "sql", -3)).toEqual([]);
   });
 });
+
+describe("validatePanel on status history", () => {
+  const field = (alias: string) => ({
+    alias,
+    column: alias,
+    label: alias,
+    type: "raw",
+    rawQuery: alias,
+  });
+  const run = (type: string, fields: any, config: any = {}, queryType = "sql") => {
+    const errors: string[] = [];
+    validatePanel(
+      gt,
+      {
+        data: {
+          type,
+          queryType,
+          config,
+          queries: [
+            {
+              customQuery: queryType === "promql",
+              query: "SELECT 1",
+              fields: { x: [], y: [], breakdown: [], z: [], ...fields },
+            },
+          ],
+        },
+        layout: { currentQueryIndex: 0 },
+      },
+      errors,
+      true,
+      [],
+      "dashboard",
+      { state: { zoConfig: {} } },
+      () => true,
+    );
+    return errors;
+  };
+
+  it("accepts one time x and one value, and rejects a missing x", () => {
+    expect(run("status-history", { x: [field("ts")], y: [field("v")] })).toEqual([]);
+    expect(run("status-history", { x: [], y: [field("v")] })).toHaveLength(1);
+  });
+
+  it("is allowed on PromQL", () => {
+    const unsupported = gt("dashboard.utils.promqlChartTypeUnsupported");
+    expect(run("status-history", {}, {}, "promql")).not.toContain(unsupported);
+  });
+
+  it("checks the value alignment", () => {
+    expect(
+      run(
+        "status-history",
+        { x: [field("ts")], y: [field("v")] },
+        { state_value_align: "justify" },
+      ),
+    ).toHaveLength(1);
+  });
+
+  it("lists status history as an importable panel type", () => {
+    const errors = validateDashboardJson(gt, {
+      dashboardId: "d",
+      title: "t",
+      tabs: [
+        {
+          tabId: "default",
+          name: "Default",
+          panels: [
+            { type: "status-history", id: "p", title: "t", layout: { x: 0, y: 0, w: 1, h: 1 } },
+          ],
+        },
+      ],
+    });
+    expect(errors.filter((error) => /unsupported|not supported/i.test(error))).toEqual([]);
+  });
+});

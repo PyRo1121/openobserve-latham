@@ -104,6 +104,7 @@ export const useAnnotationsData = (
     "scatter",
     "stacked",
     "state-timeline",
+    "status-history",
   ];
   const processTabPanels = (dashboardData: any): any[] => {
     if (!dashboardData?.tabs || !Array.isArray(dashboardData.tabs)) {

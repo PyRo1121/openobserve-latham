@@ -230,6 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                           'stacked',
                           'h-stacked',
                           'state-timeline',
+                          'status-history',
                         ].includes(dashboardPanelData.data.type) &&
                         panelSchemaRendererRef?.checkIfPanelIsTimeSeries === true
                       "

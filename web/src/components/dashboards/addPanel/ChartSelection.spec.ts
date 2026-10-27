@@ -166,4 +166,21 @@ describe("ChartSelection", () => {
 
     filteredWrapper.unmount();
   });
+
+  it("lists status history with its own icon and keeps it on PromQL", async () => {
+    const item = wrapper.find("[data-test='selected-chart-status-history-item']");
+    expect(item.exists()).toBe(true);
+    expect(item.find("img").attributes("src")).toContain("charts/status-history.svg");
+    await item.trigger("click");
+    expect(wrapper.emitted()["update:selectedChartType"].at(-1)).toEqual(["status-history"]);
+    const { dashboardPanelData } = wrapper.vm;
+    const previous = dashboardPanelData.data.queryType;
+    dashboardPanelData.data.queryType = "promql";
+    await flushPromises();
+    const li = wrapper
+      .find("[data-test='selected-chart-status-history-item']")
+      .element.closest("li");
+    expect(li.className.includes("cursor-not-allowed")).toBe(false);
+    dashboardPanelData.data.queryType = previous;
+  });
 });

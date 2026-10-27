@@ -9,7 +9,7 @@ const NO_AXIS_TYPES: string[] = [];
 // One series per panel, so a legend has nothing to tell apart.
 const NO_LEGEND_TYPES: string[] = [...NO_AXIS_TYPES];
 // These lay out their own legend and axes, so the shared legend layout and axis width do not apply.
-const OWN_LAYOUT_TYPES: string[] = ["hostmap"];
+const OWN_LAYOUT_TYPES: string[] = ["status-history", "hostmap"];
 
 interface PanelQueriesState {
   data: { queries?: Array<{ config?: { query_type?: string } } | null> };

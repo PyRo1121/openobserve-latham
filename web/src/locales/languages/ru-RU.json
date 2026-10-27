@@ -6625,6 +6625,7 @@
     "heatmapLabel": "Тепловая карта",
     "stateTimelineLabel": "Временная шкала состояний",
     "configSectionStateTimeline": "Временная шкала состояний",
+    "configSectionStatusHistory": "История статусов",
     "hostmapLabel": "Карта хостов",
     "configSectionHostmap": "Карта хостов",
     "hostmapEntityLabel": "Метка сущности",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "Скрывать ячейки меньше",
     "heatmapHideBelowTooltip": "Ячейки со значением меньше этого остаются пустыми.",
     "stateValueAlign": "Выравнивание текста состояния",
+    "statusHistoryShowValues": "Показывать значения",
     "mapCluster": "Группировать точки",
     "mapClusterRadius": "Размер кластера (px)",
     "mapClusterRadiusTooltip": "Точки, расположенные на экране ближе этого расстояния, объединяются в один пузырь с их количеством.",
@@ -7690,6 +7692,7 @@
       "gauge": "Датчик",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "История статусов",
       "sankey": "Санкей",
       "customChart": "Пользовательский график"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "Группа",
     "wellSubgroup": "Подгруппа",
     "wellSize": "Размер",
+    "wellTime": "Время",
+    "wellRow": "Строка",
     "value": "Значение"
   },
   "home": {

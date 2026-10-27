@@ -67,6 +67,7 @@ export const usePanelFields = ({
       case "heatmap":
       case "gauge":
       case "state-timeline":
+      case "status-history":
       case "hostmap":
       case "area":
       case "bar":
@@ -106,6 +107,7 @@ export const usePanelFields = ({
       case "stacked":
       case "h-stacked":
       case "state-timeline":
+      case "status-history":
         return (
           dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields
             .breakdown?.length >= 1
@@ -143,6 +145,7 @@ export const usePanelFields = ({
       case "area-stacked":
       case "heatmap":
       case "state-timeline":
+      case "status-history":
       case "hostmap":
         return (
           dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields.y

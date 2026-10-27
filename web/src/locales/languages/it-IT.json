@@ -6625,6 +6625,7 @@
     "heatmapLabel": "Mappa termica",
     "stateTimelineLabel": "Cronologia degli stati",
     "configSectionStateTimeline": "Cronologia degli stati",
+    "configSectionStatusHistory": "Cronologia stato",
     "hostmapLabel": "Mappa host",
     "configSectionHostmap": "Mappa host",
     "hostmapEntityLabel": "Etichetta entità",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "Nascondi celle sotto",
     "heatmapHideBelowTooltip": "Le celle con un valore inferiore restano vuote.",
     "stateValueAlign": "Allineamento del testo di stato",
+    "statusHistoryShowValues": "Mostra valori",
     "mapCluster": "Raggruppa punti",
     "mapClusterRadius": "Dimensione gruppo (px)",
     "mapClusterRadiusTooltip": "I punti più vicini di questa distanza sullo schermo vengono uniti in una bolla che ne mostra il numero.",
@@ -7690,6 +7692,7 @@
       "gauge": "Indicatore",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "Cronologia stato",
       "sankey": "Sankey",
       "customChart": "Grafico personalizzato"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "Gruppo",
     "wellSubgroup": "Sottogruppo",
     "wellSize": "Dimensione",
+    "wellTime": "Tempo",
+    "wellRow": "Riga",
     "value": "Valore"
   },
   "home": {

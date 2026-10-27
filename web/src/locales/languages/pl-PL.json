@@ -6625,6 +6625,7 @@
     "heatmapLabel": "Mapa ciepła",
     "stateTimelineLabel": "Oś czasu stanów",
     "configSectionStateTimeline": "Oś czasu stanów",
+    "configSectionStatusHistory": "Historia stanu",
     "hostmapLabel": "Mapa hostów",
     "configSectionHostmap": "Mapa hostów",
     "hostmapEntityLabel": "Etykieta encji",
@@ -7420,6 +7421,7 @@
     "heatmapHideBelow": "Ukryj komórki poniżej",
     "heatmapHideBelowTooltip": "Komórki o mniejszej wartości pozostają puste.",
     "stateValueAlign": "Wyrównanie tekstu stanu",
+    "statusHistoryShowValues": "Pokaż wartości",
     "mapCluster": "Grupuj punkty",
     "mapClusterRadius": "Rozmiar klastra (px)",
     "mapClusterRadiusTooltip": "Punkty bliższe sobie na ekranie są łączone w jeden bąbel pokazujący ich liczbę.",
@@ -7690,6 +7692,7 @@
       "gauge": "Wskaźnik",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "Historia stanu",
       "sankey": "Sankey",
       "customChart": "Wykres niestandardowy"
     },
@@ -8635,6 +8638,8 @@
     "wellGroup": "Grupa",
     "wellSubgroup": "Podgrupa",
     "wellSize": "Rozmiar",
+    "wellTime": "Czas",
+    "wellRow": "Wiersz",
     "value": "Wartość"
   },
   "home": {

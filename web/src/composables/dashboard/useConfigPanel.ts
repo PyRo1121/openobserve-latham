@@ -71,6 +71,7 @@ export const THRESHOLD_CHART_TYPES: readonly string[] = [
   "gauge",
   "metric",
   "state-timeline",
+  "status-history",
   "hostmap",
 ];
 
@@ -104,6 +105,7 @@ export const SERIES_OVERRIDE_CHART_TYPES: readonly string[] = [
   "gauge",
   "metric",
   "state-timeline",
+  "status-history",
 ];
 
 export const shouldShowSeriesOverrides = (dashboardPanelData: any): boolean =>
@@ -186,6 +188,7 @@ export function useConfigPanel(
   const { t, tm } = useI18nTyped();
 
   const isStateTimeline = computed(() => dashboardPanelData.data.type === "state-timeline");
+  const isStatusHistory = computed(() => dashboardPanelData.data.type === "status-history");
   const isRowChart = computed(() => isRowTimeline(dashboardPanelData.data.type));
   const isPieOrDonut = computed(
     () => dashboardPanelData.data.type === "pie" || dashboardPanelData.data.type === "donut",
@@ -437,6 +440,10 @@ export function useConfigPanel(
       "show-state-text": {
         label: t("dashboard.stateTimelineShowStateText"),
         visible: isStateTimeline.value,
+      },
+      "status-history-show-values": {
+        label: t("dashboard.statusHistoryShowValues"),
+        visible: isStatusHistory.value,
       },
       "row-sort": {
         label: t("dashboard.stateTimelineRowSort"),

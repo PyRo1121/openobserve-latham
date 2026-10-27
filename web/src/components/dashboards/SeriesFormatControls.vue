@@ -593,7 +593,7 @@ const colorSwatches = computed(() => {
 });
 
 const showThresholds = computed(() => THRESHOLD_CHART_TYPES.includes(props.chartType));
-// State timeline rows colour each value, so a row unit, decimals and colour do not apply.
+// State timeline and status history rows colour each value, so a row unit, decimals and colour do not apply.
 const isStateTimeline = computed(() => isRowTimeline(props.chartType));
 
 const addValueMapping = () =>

@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /** Panel types drawn as one band per entity over time by the state timeline converter. */
-export const ROW_TIMELINE_TYPES: readonly string[] = ["state-timeline"];
+export const ROW_TIMELINE_TYPES: readonly string[] = ["state-timeline", "status-history"];
 
 export const isRowTimeline = (type: unknown): boolean =>
   typeof type === "string" && ROW_TIMELINE_TYPES.includes(type);

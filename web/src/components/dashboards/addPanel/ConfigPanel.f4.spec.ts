@@ -162,12 +162,56 @@ describe("ConfigPanel chart type settings", { timeout: 30_000 }, () => {
     await flushPromises();
   };
 
+  it("mounting status history writes none of its keys", async () => {
+    const panel = mountPanel("status-history");
+    const before = JSON.stringify(panel.data.config);
+    await flushPromises();
+    expect(JSON.stringify(panel.data.config)).toBe(before);
+  });
+
+  it("status history: shows its section with show values and the shared row settings, without merge gaps", async () => {
+    const panel = mountPanel("status-history");
+    await flushPromises();
+    expect(wrapper!.text()).toContain("Status history");
+    expect(isShown("dashboard-config-status_history_show_values")).toBe(true);
+    expect(isShown("dashboard-config-state-timeline-row-height")).toBe(true);
+    expect(isShown("dashboard-config-state_value_align")).toBe(true);
+    expect(isShown("dashboard-config-state-timeline-merge-gaps")).toBe(false);
+    expect(isShown("dashboard-config-state-timeline-show-state-text")).toBe(false);
+    await emitSwitch("dashboard-config-status_history_show_values", false);
+    expect(panel.data.config.status_history_show_values).toBe(false);
+    await pick("dashboard-config-state_value_align", "Right");
+    expect(panel.data.config.state_value_align).toBe("right");
+  });
+
+  it("status history: row sort and tooltip mode are dropdowns with Default first, and Default stores nothing", async () => {
+    const panel = mountPanel("status-history");
+    await flushPromises();
+    for (const [test, key, value] of [
+      ["dashboard-config-state-timeline-row-sort", "row_sort", "non_ok_time"],
+      ["dashboard-config-state-timeline-tooltip-mode", "tooltip_mode", "all_rows"],
+    ]) {
+      const select = wrapper!
+        .findAllComponents({ name: "OSelect" })
+        .find((component: any) => component.attributes("data-test") === test)!;
+      expect(select, test).toBeTruthy();
+      expect(select.props("options")[0].label, test).toBe("Default");
+      select.vm.$emit("update:modelValue", value);
+      await flushPromises();
+      expect(panel.data.config[key], test).toBe(value);
+      select.vm.$emit("update:modelValue", select.props("options")[0].value);
+      await flushPromises();
+      expect(key in panel.data.config, test).toBe(false);
+    }
+  });
+
   it("state timeline: keeps its own controls and writes the value alignment", async () => {
     const panel = mountPanel("state-timeline");
     await flushPromises();
     expect(isShown("dashboard-config-state-timeline-merge-gaps")).toBe(true);
     expect(isShown("dashboard-config-state-timeline-show-state-text")).toBe(true);
     expect(isShown("dashboard-config-state_value_align")).toBe(true);
+    expect(isShown("dashboard-config-status_history_show_values")).toBe(false);
     await pick("dashboard-config-state_value_align", "Right");
     expect(panel.data.config.state_value_align).toBe("right");
     expect(has("dashboard-config-state-timeline-row-gap")).toBe(true);

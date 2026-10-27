@@ -228,7 +228,7 @@ export const serializeSeriesOverrides = (drafts: SeriesOverrideDraft[]): SeriesO
     .map((draft) => serializeSeriesOverride(draft))
     .filter((entry): entry is SeriesOverrideEntry => entry !== null);
 
-/** Legend series names of converted chart options, read per chart type like Color by series; state-timeline rows come from `extras.rowEntities`. */
+/** Legend series names of converted chart options, read per chart type like Color by series; state-timeline and status-history rows come from `extras.rowEntities`. */
 export const getLegendSeriesNames = (options: any, chartType: string, extras?: any): string[] => {
   const series: any[] = Array.isArray(options?.series) ? options.series : [];
   let names: unknown[];

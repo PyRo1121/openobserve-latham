@@ -6625,6 +6625,7 @@
     "heatmapLabel": "熱力圖",
     "stateTimelineLabel": "狀態時間軸",
     "configSectionStateTimeline": "狀態時間軸",
+    "configSectionStatusHistory": "狀態歷史",
     "hostmapLabel": "主機地圖",
     "configSectionHostmap": "主機地圖",
     "hostmapEntityLabel": "實體標籤",
@@ -7415,6 +7416,7 @@
     "heatmapHideBelow": "隱藏低於此值的儲存格",
     "heatmapHideBelowTooltip": "值低於此值的儲存格保持空白。",
     "stateValueAlign": "狀態文字對齊",
+    "statusHistoryShowValues": "顯示數值",
     "mapCluster": "聚合點",
     "mapClusterRadius": "聚合大小 (px)",
     "mapClusterRadiusTooltip": "畫面上距離小於此值的點會合併為一個顯示數量的泡泡。",
@@ -7685,6 +7687,7 @@
       "gauge": "儀表",
       "html": "HTML",
       "markdown": "Markdown",
+      "statusHistory": "狀態歷史",
       "sankey": "桑基",
       "customChart": "自訂圖表"
     },
@@ -8630,6 +8633,8 @@
     "wellGroup": "分組",
     "wellSubgroup": "子分組",
     "wellSize": "大小",
+    "wellTime": "時間",
+    "wellRow": "列",
     "value": "值"
   },
   "home": {

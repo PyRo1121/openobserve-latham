@@ -92,6 +92,43 @@ describe("usePanelAggregation", () => {
       });
     });
 
+    describe("status-history chart type", () => {
+      it("keeps one y, counts a raw one and clears time shifts", () => {
+        const panelData = makePanelData("status-history");
+        const fields = panelData.data.queries[0].fields;
+        fields.y = [
+          { functionName: null, args: [{ type: "field" }, { type: "extra" }] },
+          { functionName: "avg", args: [{ type: "field" }, { type: "extra" }] },
+        ];
+        panelData.data.queries[0].config.time_shift = [{ offSet: "1h" }] as any;
+        makeAggregation(panelData).resetAggregationFunction();
+        expect(fields.y.map((item: any) => item.functionName)).toEqual(["count"]);
+        expect(panelData.data.queries[0].config.time_shift).toEqual([]);
+      });
+
+      it("gets its default count back after a state timeline dropped the value", () => {
+        const panelData = makePanelData("state-timeline");
+        const fields = panelData.data.queries[0].fields;
+        fields.y = [
+          { functionName: "count", args: [{ type: "field", value: { field: "level" } }] },
+        ];
+        const { resetAggregationFunction } = makeAggregation(panelData);
+        resetAggregationFunction();
+        expect(fields.y).toEqual([]);
+        panelData.data.type = "status-history";
+        resetAggregationFunction();
+        expect(fields.y).toHaveLength(1);
+        expect(fields.y[0].functionName).toBe("count");
+      });
+
+      it("leaves the value empty for a hand-written query", () => {
+        const panelData = makePanelData("status-history");
+        panelData.data.queries[0].customQuery = true;
+        makeAggregation(panelData).resetAggregationFunction();
+        expect(panelData.data.queries[0].fields.y).toEqual([]);
+      });
+    });
+
     describe("hostmap chart type", () => {
       it("drops a time-bucket entity, keeps one value and two group levels", () => {
         const panelData: any = makePanelData("hostmap");

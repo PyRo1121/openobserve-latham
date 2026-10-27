@@ -182,6 +182,12 @@ describe("defaultFields", () => {
       const { y } = buildDefaultBuilderFields("bar", "metrics", grouped, "m1");
       expect(y[0].functionName).toBe("avg");
     });
+
+    it("status history seeds the time x and a count", () => {
+      const { x, y } = buildDefaultBuilderFields("status-history", "logs", logsSchema, "logs");
+      expect(x[0].functionName).toBe("histogram");
+      expect(y[0].functionName).toBe("count");
+    });
   });
 
   describe("firstNumericField", () => {
