@@ -198,7 +198,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <OButton
                       v-if="
                         !panelSchemaRendererRef?.noData &&
-                        !['table', 'heatmap', 'metric', 'gauge', 'geomap', 'maps'].includes(
+                        !['table', 'heatmap', 'metric', 'gauge', 'logs', 'geomap', 'maps'].includes(
                           dashboardPanelData.data.type,
                         )
                       "

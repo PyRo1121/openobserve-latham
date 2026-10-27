@@ -126,7 +126,9 @@ export const shouldShowHeatmapYBucket = (dashboardPanelData: any, promqlMode: bo
 };
 
 /** The only sections an HTML panel shows; every other section configures an ECharts option it never builds. */
-export const HTML_PANEL_SECTIONS: Record<string, readonly SectionId[]> = {};
+export const HTML_PANEL_SECTIONS: Record<string, readonly SectionId[]> = {
+  logs: ["general", "logs"],
+};
 
 export const isSectionAllowedForType = (sectionId: SectionId, type: unknown): boolean =>
   !isHtmlPanel(type) || (HTML_PANEL_SECTIONS[type as string] ?? []).includes(sectionId);
@@ -858,6 +860,32 @@ export function useConfigPanel(
             dashboardPanelData.data.queryType === "promql" &&
             allVisibleQueriesInstant(dashboardPanelData)
           ),
+      },
+    },
+    logs: {
+      "logs-fields": {
+        label: [
+          t("dashboard.logsMessageField"),
+          t("dashboard.logsLevelField"),
+          t("dashboard.logsTimeField"),
+        ],
+        visible: dashboardPanelData.data.type === "logs",
+      },
+      "logs-order": {
+        label: t("dashboard.logsOrder"),
+        visible: dashboardPanelData.data.type === "logs",
+      },
+      "logs-show-time": {
+        label: t("dashboard.logsShowTime"),
+        visible: dashboardPanelData.data.type === "logs",
+      },
+      "logs-wrap": {
+        label: t("dashboard.logsWrap"),
+        visible: dashboardPanelData.data.type === "logs",
+      },
+      "logs-prettify-json": {
+        label: t("dashboard.logsPrettifyJson"),
+        visible: dashboardPanelData.data.type === "logs",
       },
     },
   }));

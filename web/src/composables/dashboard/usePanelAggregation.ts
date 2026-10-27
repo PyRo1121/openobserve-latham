@@ -18,6 +18,7 @@ import {
   buildDefaultBuilderFields,
 } from "@/utils/dashboard/defaultFields";
 import { isCustomSqlPanel, isRowTimeline } from "@/utils/dashboard/chartTypeGroups";
+import type { LogsOrder } from "@/utils/dashboard/convertLogsPanelData";
 import {
   HOSTMAP_DEFAULT_COLOR,
   HOSTMAP_MAX_GROUP_LEVELS,
@@ -26,14 +27,36 @@ import {
 // Types that reset their own queries on a switch, so no builder state carries into them.
 const NON_BUILDER_TYPES = ["html", "markdown", "custom_chart"];
 
-// The SQL each custom-SQL panel type starts from, keyed by panel type.
-const STARTER_QUERIES: Record<string, (stream: string, timestampColumn: string) => string> = {};
+/** The SQL a new logs panel starts from: the stream's latest rows, or its earliest when ordered oldest first. */
+export const defaultLogsPanelQuery = (
+  stream: string,
+  timestampColumn: string,
+  order: LogsOrder = "newest",
+): string =>
+  stream
+    ? `SELECT * FROM "${stream}" ORDER BY ${timestampColumn} ${order === "oldest" ? "ASC" : "DESC"} LIMIT 100`
+    : "";
 
-const STARTER_QUERY_PATTERNS: RegExp[] = [];
+// The SQL each custom-SQL panel type starts from, keyed by panel type.
+const STARTER_QUERIES: Record<string, (stream: string, timestampColumn: string) => string> = {
+  logs: defaultLogsPanelQuery,
+};
+
+const STARTER_QUERY_PATTERNS: RegExp[] = [
+  /^SELECT \* FROM "[^"]*" ORDER BY \S+ (?:ASC|DESC) LIMIT 100$/,
+];
 
 /** Whether `text` is still the untouched starter SQL a panel was seeded with. */
 export const isPanelStarterQuery = (text: unknown): boolean =>
   typeof text === "string" && STARTER_QUERY_PATTERNS.some((pattern) => pattern.test(text.trim()));
+
+/** An untouched logs starter rewritten to fetch rows in `order`; reversing the newest 100 would never show the oldest. */
+export const orderLogsStarter = (text: string, order: LogsOrder): string =>
+  isPanelStarterQuery(text)
+    ? text
+        .trim()
+        .replace(/ (?:ASC|DESC) LIMIT 100$/, ` ${order === "oldest" ? "ASC" : "DESC"} LIMIT 100`)
+    : text;
 
 const BY_SERIES_COLOR_MODES = ["palette-classic-by-series", "palette-classic"];
 

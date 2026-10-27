@@ -102,6 +102,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
         </div>
 
+        <LogsPanelRenderer
+          v-else-if="panelSchema.type == 'logs'"
+          :data="panelData.chartType == 'logs' ? panelData : null"
+          :config="panelSchema.config"
+        />
         <CustomChartRenderer
           v-else-if="panelSchema.type == 'custom_chart'"
           :data="panelData"
@@ -432,6 +437,7 @@ const MarkdownRenderer = defineAsyncComponent(() => {
   return import("./panels/MarkdownRenderer.vue");
 });
 
+const LogsPanelRenderer = defineAsyncComponent(() => import("./panels/LogsPanelRenderer.vue"));
 const AddAnnotation = defineAsyncComponent(() => {
   return import("./addPanel/AddAnnotation.vue");
 });
@@ -471,6 +477,7 @@ export default defineComponent({
     MapsRenderer,
     HTMLRenderer,
     MarkdownRenderer,
+    LogsPanelRenderer,
     AddAnnotation,
     CustomChartRenderer,
     LoadingProgress,
@@ -2118,6 +2125,10 @@ export default defineComponent({
       // Raw data exists but conversion hasn't produced output yet — wait.
       if (!panelData.value?.chartType) {
         return "";
+      }
+
+      if (type === "logs") {
+        return panelData.value?.rows?.length > 0 ? "" : "No Data";
       }
 
       // Table renders raw rows; the conversion returns { rows, columns }.

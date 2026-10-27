@@ -320,6 +320,7 @@ describe("panelEditor types and utilities", () => {
         expect(ALL_CHART_TYPES).toContain("markdown");
         expect(ALL_CHART_TYPES).toContain("custom_chart");
         expect(ALL_CHART_TYPES).toContain("state-timeline");
+        expect(ALL_CHART_TYPES).toContain("logs");
         expect(ALL_CHART_TYPES).toContain("hostmap");
       });
 
@@ -384,7 +385,7 @@ describe("panelEditor types and utilities", () => {
 
       it("all chart types should be accounted for", () => {
         const regularChartTypes = ALL_CHART_TYPES.filter(
-          (type) => !["html", "markdown", "custom_chart"].includes(type),
+          (type) => !["html", "markdown", "custom_chart", "logs"].includes(type),
         );
 
         regularChartTypes.forEach((type) => {

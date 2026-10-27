@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { reactive } from "vue";
-import { usePanelAggregation } from "./usePanelAggregation";
+import {
+  defaultLogsPanelQuery,
+  isPanelStarterQuery,
+  orderLogsStarter,
+  usePanelAggregation,
+} from "./usePanelAggregation";
 
 const DEFAULT_CUSTOM_CHART_TEXT = "option = {};";
 const getDefaultCustomChartText = vi.fn(() => DEFAULT_CUSTOM_CHART_TEXT);
@@ -519,6 +524,72 @@ describe("usePanelAggregation", () => {
         makeAggregation(panelData).resetAggregationFunction();
         expect(panelData.data.queries[0].customQuery).toBe(true);
         expect(panelData.data.queries[0].query).toContain("histogram(_timestamp)");
+      });
+    });
+
+    describe("logs", () => {
+      it("logs resets to one custom SQL query on the chosen stream, newest rows first", () => {
+        const panelData = makePanelData("logs");
+        panelData.data.queries.push(makeDefaultQuery({ query: "SELECT 2" }));
+        panelData.layout.currentQueryIndex = 1;
+        panelData.data.queries[1].fields.stream = "demo_app";
+        panelData.data.queries[1].config.time_shift = [{ offSet: "1h" }] as any;
+        usePanelAggregation({
+          dashboardPanelData: panelData,
+          getDefaultQueries: () => [makeDefaultQuery()],
+          getDefaultCustomChartText,
+          getTimestampColumn: () => "ts",
+        }).resetAggregationFunction();
+        expect(panelData.data.queries).toHaveLength(1);
+        expect(panelData.layout.currentQueryIndex).toBe(0);
+        const [query] = panelData.data.queries;
+        expect(query.customQuery).toBe(true);
+        expect(query.fields.stream).toBe("demo_app");
+        expect(query.query).toBe('SELECT * FROM "demo_app" ORDER BY ts DESC LIMIT 100');
+        expect(query.config.time_shift).toEqual([]);
+        expect(panelData.data.queryType).toBe("sql");
+        expect((panelData.layout as any).showQueryBar).toBe(true);
+        expect(panelData.data.htmlContent).toBe("");
+        expect(panelData.data.markdownContent).toBe("");
+      });
+
+      it("keeps hand-written SQL on a switch to logs", () => {
+        const typed = makePanelData("logs");
+        Object.assign(typed.data.queries[0], {
+          customQuery: true,
+          query: "SELECT host, message FROM \"test_stream\" WHERE level = 'error'",
+        });
+        makeAggregation(typed).resetAggregationFunction();
+        expect(typed.data.queries[0]).toMatchObject({
+          customQuery: true,
+          query: "SELECT host, message FROM \"test_stream\" WHERE level = 'error'",
+        });
+      });
+
+      it("returns an untouched logs starter to the builder on a switch to a line chart", () => {
+        const panelData = makePanelData("line");
+        Object.assign(panelData.data.queries[0], {
+          customQuery: true,
+          query: 'SELECT * FROM "test_stream" ORDER BY _timestamp DESC LIMIT 100',
+        });
+        makeAggregation(panelData).resetAggregationFunction();
+        const [query] = panelData.data.queries;
+        expect(query.customQuery).toBe(false);
+        expect(query.query).toBe("");
+        expect(query.fields.x.map((field: any) => field.alias)).toEqual(["x_axis_1"]);
+        expect(query.fields.y.map((field: any) => field.functionName)).toEqual(["count"]);
+        expect(isPanelStarterQuery(defaultLogsPanelQuery("s", "_timestamp"))).toBe(true);
+      });
+
+      it("orders the logs starter oldest first by fetching the earliest rows", () => {
+        const oldest = defaultLogsPanelQuery("s", "_timestamp", "oldest");
+        expect(oldest).toBe('SELECT * FROM "s" ORDER BY _timestamp ASC LIMIT 100');
+        expect(isPanelStarterQuery(oldest)).toBe(true);
+        expect(orderLogsStarter(defaultLogsPanelQuery("s", "_timestamp"), "oldest")).toBe(oldest);
+        expect(orderLogsStarter(oldest, "newest")).toBe(defaultLogsPanelQuery("s", "_timestamp"));
+        expect(orderLogsStarter('SELECT * FROM "s" LIMIT 5', "oldest")).toBe(
+          'SELECT * FROM "s" LIMIT 5',
+        );
       });
     });
   });

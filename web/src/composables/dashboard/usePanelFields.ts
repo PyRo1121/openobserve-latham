@@ -81,6 +81,7 @@ export const usePanelFields = ({
             .length >= 1
         );
       case "metric":
+      case "logs":
         return (
           dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields.x
             .length >= 0
@@ -115,6 +116,8 @@ export const usePanelFields = ({
           dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields
             .breakdown?.length >= HOSTMAP_MAX_GROUP_LEVELS
         );
+      case "logs":
+        return true;
       case "table":
         // Allow up to 3 breakdown fields for table charts
         return (
@@ -148,6 +151,8 @@ export const usePanelFields = ({
           dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields.y
             .length >= 1
         );
+      case "logs":
+        return true;
       default:
         return false;
     }

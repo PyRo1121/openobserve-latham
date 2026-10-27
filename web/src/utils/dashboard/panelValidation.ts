@@ -32,6 +32,7 @@ import {
 } from "@/utils/dashboard/panelTypeOptions";
 import { TABLE_DENSITIES, TABLE_FOOTER_CALCS } from "@/utils/dashboard/tableOptions";
 import { SPECIAL_VALUE_MATCHES } from "@/utils/dashboard/tableConfigUtils";
+import { LOGS_ORDERS } from "@/utils/dashboard/convertLogsPanelData";
 import { HOSTMAP_MAX_GROUP_LEVELS } from "@/utils/dashboard/convertHostmapData";
 import { isGaugeFixedRangeValid, type GaugeQueryConfig } from "@/utils/dashboard/gaugeDial";
 import { MAX_LINE_THICKNESS, isValidLineThickness } from "@/utils/dashboard/promqlChartSeriesProps";
@@ -779,6 +780,9 @@ const validatePanelContentByType = (t: TranslateFn, panel: any, errors: string[]
         t("dashboard.utils.enterCustomChartQuery"),
       );
       break;
+    case "logs":
+      validateQueriesNotEmpty(t, [panel?.queries?.[0]], errors);
+      break;
   }
 };
 
@@ -937,6 +941,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "custom_chart",
     "html",
     "markdown",
+    "logs",
   ];
 
   if (!allowedTypes.includes(panel?.type)) {
@@ -1115,6 +1120,7 @@ const PANEL_TYPE_CHOICE_KEYS: ReadonlyArray<[string, string[], readonly unknown[
   ["table_density", ["table"], TABLE_DENSITIES],
   ["state_value_align", ["state-timeline"], STATE_VALUE_ALIGNS],
   ["sort_order", ["pie", "donut"], SORT_ORDERS],
+  ["logs_order", ["logs"], LOGS_ORDERS],
 ];
 
 const PANEL_TYPE_LIST_KEYS: ReadonlyArray<[string, string[], readonly unknown[]]> = [

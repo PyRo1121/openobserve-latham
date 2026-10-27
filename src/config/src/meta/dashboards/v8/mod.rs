@@ -770,6 +770,20 @@ pub struct PanelConfig {
     #[schema(value_type = Option<f64>)]
     map_cluster_radius: Option<OrdF64>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    logs_message_field: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    logs_level_field: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    logs_time_field: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    logs_wrap: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    logs_prettify_json: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    logs_show_time: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    logs_order: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     hostmap_entity_label: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     hostmap_group_by: Option<Vec<String>>,
@@ -2962,7 +2976,15 @@ mod tests {
             "map_cluster": true,
             "map_cluster_radius": 40.0
         });
-        let rest3 = serde_json::json!({});
+        let rest3 = serde_json::json!({
+            "logs_message_field": "message",
+            "logs_level_field": "level",
+            "logs_time_field": "_timestamp",
+            "logs_wrap": true,
+            "logs_prettify_json": false,
+            "logs_show_time": true,
+            "logs_order": "oldest"
+        });
         for part in [rest, rest2, rest3] {
             fields
                 .as_object_mut()

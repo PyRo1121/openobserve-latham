@@ -583,4 +583,17 @@ describe("usePanelFields", () => {
       expect(fields.promqlMode.value).toBe(true);
     });
   });
+
+  describe("logs slots", () => {
+    it("takes no x, y or breakdown fields", () => {
+      panelData.data.type = "logs";
+      for (let i = 0; i < 3; i++) {
+        fields.addXAxisItem({ name: `field_x_${i}` });
+        fields.addYAxisItem({ name: `field_y_${i}` });
+        fields.addBreakDownAxisItem({ name: `field_b_${i}` });
+      }
+      const { x, y, breakdown } = panelData.data.queries[0].fields;
+      expect([x.length, y.length, breakdown.length]).toEqual([0, 0, 0]);
+    });
+  });
 });

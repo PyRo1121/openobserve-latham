@@ -25,6 +25,7 @@ import {
   usePanelLivePreview,
   variablesSignature,
 } from "./usePanelLivePreview";
+import { defaultLogsPanelQuery, orderLogsStarter } from "./usePanelAggregation";
 
 const makeQuery = (overrides: Record<string, any> = {}) => ({
   query: 'SELECT histogram(_timestamp) AS "x_axis_1" FROM "default"',
@@ -172,6 +173,22 @@ describe("usePanelLivePreview", () => {
   });
 
   describe("live runs", () => {
+    it("runs a logs starter flipped to oldest first without waiting for Apply", async () => {
+      const { panel, applied, run, live, scope } = setup();
+      panel.type = "logs";
+      panel.queries[0].customQuery = true;
+      panel.queries[0].query = defaultLogsPanelQuery("default", "_timestamp");
+      applied.value = clone(panel);
+      live.arm();
+      panel.queries[0].query = orderLogsStarter(panel.queries[0].query, "oldest");
+      await nextTick();
+      expect(live.applyState.value).not.toBe("typed");
+      vi.advanceTimersByTime(LIVE_PREVIEW_DEBOUNCE_MS);
+      expect(run).toHaveBeenCalledTimes(1);
+      expect(applied.value.queries[0].query).toMatch(/ASC LIMIT 100$/);
+      scope.stop();
+    });
+
     it("runs an aggregation change made inside the still-open axis menu", async () => {
       const { panel, run, live, scope } = setup({ domOverlay: true });
       document.body.innerHTML =
