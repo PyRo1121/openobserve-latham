@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Masquer les cellules sous",
     "heatmapHideBelowTooltip": "Les cellules dont la valeur est inférieure restent vides.",
+    "treemapShowBreadcrumb": "Afficher le fil d'Ariane",
     "stateValueAlign": "Alignement du texte d'état",
     "mapCluster": "Regrouper les points",
     "mapClusterRadius": "Taille du groupe (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "Jauge",
       "html": "HTML",
       "markdown": "Markdown",
+      "treemap": "Treemap",
       "sankey": "Sankey",
       "customChart": "Graphique personnalisé"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "Utilisez ces champs pour diviser les données en différentes sections sur l'axe Y pour une vue plus claire.",
     "breakdownTooltipDefault": "Utilisez ces champs pour diviser les données en différentes sections sur l'axe X pour une vue plus claire.",
     "breakdownTooltipStateTimeline": "Chaque valeur de ce champ obtient sa propre ligne dans la chronologie.",
+    "breakdownTooltipTreemap": "Divise chaque tuile de l'axe X en tuiles plus petites, une par valeur de ce champ.",
     "breakdownTooltipHostmap": "Les cellules sont encadrées par ces champs : le premier est le groupe externe, le second le groupe interne.",
     "hostmapEntity": "Entité",
     "hostmapValue": "Valeur",

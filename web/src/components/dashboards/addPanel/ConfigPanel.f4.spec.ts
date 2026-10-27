@@ -162,6 +162,22 @@ describe("ConfigPanel chart type settings", { timeout: 30_000 }, () => {
     await flushPromises();
   };
 
+  it("treemap: mounting writes none of the new keys", async () => {
+    const panel = mountPanel("treemap");
+    const before = JSON.stringify(panel.data.config);
+    await flushPromises();
+    expect(JSON.stringify(panel.data.config)).toBe(before);
+  });
+
+  it("treemap: turning the breadcrumb off stores false and turning it on deletes the key", async () => {
+    const panel = mountPanel("treemap");
+    await flushPromises();
+    await emitSwitch("dashboard-config-treemap_show_breadcrumb", false);
+    expect(panel.data.config.treemap_show_breadcrumb).toBe(false);
+    await emitSwitch("dashboard-config-treemap_show_breadcrumb", true);
+    expect("treemap_show_breadcrumb" in panel.data.config).toBe(false);
+  });
+
   it("state timeline: keeps its own controls and writes the value alignment", async () => {
     const panel = mountPanel("state-timeline");
     await flushPromises();
@@ -175,5 +191,6 @@ describe("ConfigPanel chart type settings", { timeout: 30_000 }, () => {
     expect(panel.data.config.merge_gaps).toBe(30);
     await emitSwitch("dashboard-config-state-timeline-show-state-text", false);
     expect(panel.data.config.show_state_text).toBe(false);
+    expect(has("dashboard-config-treemap_show_breadcrumb")).toBe(false);
   });
 });

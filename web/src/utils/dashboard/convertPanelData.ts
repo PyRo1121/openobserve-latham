@@ -32,6 +32,7 @@ import { applyPanelTypeOptions } from "./panelTypeOptions";
 import { applyMetricOptions, isStatChangeOn, splitStatChangeResults } from "./metricOptions";
 import { applyGeoMapClusters, mapClusterRadius } from "./geoMapCluster";
 import { applyTableOptions } from "./tableOptions";
+import { convertTreemapData } from "./convertTreemapData";
 import { convertHostmapData } from "./convertHostmapData";
 /**
  * Converts panel data based on the panel schema and data.
@@ -158,6 +159,12 @@ export const convertPanelData = async (
         console.error(error);
         return {};
       }
+    }
+    case "treemap": {
+      return {
+        chartType: panelSchema.type,
+        ...convertTreemapData(panelSchema, data, store),
+      };
     }
     case "table": {
       // Check if PromQL query type

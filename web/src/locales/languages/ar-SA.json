@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "إخفاء الخلايا الأقل من",
     "heatmapHideBelowTooltip": "تبقى الخلايا ذات القيمة الأقل من ذلك فارغة.",
+    "treemapShowBreadcrumb": "إظهار مسار التنقل",
     "stateValueAlign": "محاذاة نص الحالة",
     "mapCluster": "تجميع النقاط",
     "mapClusterRadius": "حجم المجموعة (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "المقياس",
       "html": "HTML",
       "markdown": "ماركداون",
+      "treemap": "مخطط شجري",
       "sankey": "سانكي",
       "customChart": "المخطط المخصص"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "استخدم هذه الحقول لتقسيم البيانات إلى أقسام مختلفة على محور Y للحصول على رؤية أوضح.",
     "breakdownTooltipDefault": "استخدم هذه الحقول لتقسيم البيانات إلى أقسام مختلفة على المحور X للحصول على رؤية أوضح.",
     "breakdownTooltipStateTimeline": "تحصل كل قيمة من هذا الحقل على صفها الخاص في الخط الزمني.",
+    "breakdownTooltipTreemap": "يقسم كل مربع على المحور X إلى مربعات أصغر، مربع لكل قيمة من قيم هذا الحقل.",
     "breakdownTooltipHostmap": "تُؤطَّر الخلايا بهذين الحقلين: الأول هو المجموعة الخارجية، والثاني هو الداخلية.",
     "hostmapEntity": "الكيان",
     "hostmapValue": "القيمة",

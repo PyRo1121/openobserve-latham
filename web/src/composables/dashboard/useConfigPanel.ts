@@ -361,6 +361,10 @@ export function useConfigPanel(
         label: [t("dashboard.heatmapCellGap"), t("dashboard.heatmapHideBelow")],
         visible: dashboardPanelData.data.type === "heatmap",
       },
+      "treemap-breadcrumb": {
+        label: t("dashboard.treemapShowBreadcrumb"),
+        visible: dashboardPanelData.data.type === "treemap",
+      },
       "heatmap-histogram-mode": {
         label: t("dashboard.heatmapHistogramMode"),
         visible: !!promqlMode.value && dashboardPanelData.data.type === "heatmap",

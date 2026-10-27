@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Cellen verbergen onder",
     "heatmapHideBelowTooltip": "Cellen met een lagere waarde blijven leeg.",
+    "treemapShowBreadcrumb": "Kruimelpad tonen",
     "stateValueAlign": "Uitlijning van statustekst",
     "mapCluster": "Punten clusteren",
     "mapClusterRadius": "Clustergrootte (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "Meter",
       "html": "HTML",
       "markdown": "Markdown",
+      "treemap": "Treemap",
       "sankey": "Sankey",
       "customChart": "Aangepaste grafiek"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "Gebruik deze velden om de gegevens op te splitsen in verschillende secties op de Y-as voor een duidelijker beeld.",
     "breakdownTooltipDefault": "Gebruik deze velden om de gegevens op te splitsen in verschillende secties op de X-as voor een duidelijker beeld.",
     "breakdownTooltipStateTimeline": "Elke waarde van dit veld krijgt een eigen rij in de tijdlijn.",
+    "breakdownTooltipTreemap": "Verdeelt elke tegel van de X-as in kleinere tegels, één per waarde van dit veld.",
     "breakdownTooltipHostmap": "Cellen worden omkaderd door deze velden: het eerste is de buitenste groep, het tweede de binnenste.",
     "hostmapEntity": "Entiteit",
     "hostmapValue": "Waarde",

@@ -67,6 +67,7 @@ export const usePanelFields = ({
       case "heatmap":
       case "gauge":
       case "state-timeline":
+      case "treemap":
       case "hostmap":
       case "area":
       case "bar":
@@ -106,6 +107,7 @@ export const usePanelFields = ({
       case "stacked":
       case "h-stacked":
       case "state-timeline":
+      case "treemap":
         return (
           dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields
             .breakdown?.length >= 1
@@ -131,6 +133,7 @@ export const usePanelFields = ({
       case "pie":
       case "donut":
       case "gauge":
+      case "treemap":
         return (
           dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields.y
             .length >= 1

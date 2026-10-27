@@ -864,3 +864,70 @@ describe("validatePanel bar width", () => {
     expect(run("stacked", "sql", -3)).toEqual([]);
   });
 });
+
+describe("validatePanel on a treemap", () => {
+  const field = (alias: string) => ({
+    alias,
+    column: alias,
+    label: alias,
+    type: "raw",
+    rawQuery: alias,
+  });
+  const run = (fields: any, queryType = "sql") => {
+    const errors: string[] = [];
+    validatePanel(
+      gt,
+      {
+        data: {
+          type: "treemap",
+          queryType,
+          config: {},
+          queries: [
+            {
+              customQuery: queryType === "promql",
+              query: "SELECT 1",
+              fields: { x: [], y: [], breakdown: [], z: [], ...fields },
+            },
+          ],
+        },
+        layout: { currentQueryIndex: 0 },
+      },
+      errors,
+      true,
+      [],
+      "dashboard",
+      { state: { zoConfig: {} } },
+      () => true,
+    );
+    return errors;
+  };
+
+  it("accepts one x, one y and one breakdown", () => {
+    expect(run({ x: [field("service")], y: [field("count")], breakdown: [field("r")] })).toEqual(
+      [],
+    );
+  });
+
+  it("rejects a missing x and a second y", () => {
+    expect(run({ x: [], y: [field("c"), field("d")] })).toHaveLength(2);
+  });
+
+  it("is not supported on PromQL", () => {
+    expect(run({}, "promql")).toContain(gt("dashboard.utils.promqlChartTypeUnsupported"));
+  });
+
+  it("is an importable panel type", () => {
+    const errors = validateDashboardJson(gt, {
+      dashboardId: "d",
+      title: "t",
+      tabs: [
+        {
+          tabId: "default",
+          name: "Default",
+          panels: [{ type: "treemap", id: "p", title: "t", layout: { x: 0, y: 0, w: 1, h: 1 } }],
+        },
+      ],
+    });
+    expect(errors.filter((error) => /unsupported|not supported/i.test(error))).toEqual([]);
+  });
+});

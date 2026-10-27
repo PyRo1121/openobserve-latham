@@ -178,6 +178,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           dashboardPanelData.data.type == 'area-stacked' ||
           dashboardPanelData.data.type == 'stacked' ||
           dashboardPanelData.data.type == 'state-timeline' ||
+          dashboardPanelData.data.type == 'treemap' ||
           dashboardPanelData.data.type == 'hostmap'
         "
       >
@@ -208,6 +209,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 >
                 <span v-else-if="dashboardPanelData.data.type == 'state-timeline'">{{
                   t("panel.breakdownTooltipStateTimeline")
+                }}</span>
+                <span v-else-if="dashboardPanelData.data.type == 'treemap'">{{
+                  t("panel.breakdownTooltipTreemap")
                 }}</span>
                 <span v-else-if="dashboardPanelData.data.type == 'hostmap'">{{
                   t("panel.breakdownTooltipHostmap")
@@ -770,6 +774,8 @@ export default defineComponent({
     // Hierarchy, row and category charts name each well by its job, as the sankey builder does.
     const roleLabels = computed((): { x: string; y: string; b: string | null } | null => {
       switch (dashboardPanelData.data.type) {
+        case "treemap":
+          return { x: t("panel.wellGroup"), y: t("panel.wellSize"), b: t("panel.wellSubgroup") };
         default:
           return null;
       }
@@ -1164,6 +1170,7 @@ export default defineComponent({
       switch (dashboardPanelData.data.type) {
         case "pie":
         case "donut":
+        case "treemap":
           return t("dashboard.oneLabelFieldMessage");
         case "metric":
           return t("dashboard.xaxisFieldNAMessage");
@@ -1207,6 +1214,7 @@ export default defineComponent({
         case "pie":
         case "donut":
         case "gauge":
+        case "treemap":
           return t("dashboard.oneValueFieldMessage");
         case "metric":
           return t("dashboard.oneValueFieldMessage");

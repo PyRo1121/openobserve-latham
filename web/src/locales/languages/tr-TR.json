@@ -7419,6 +7419,7 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Şunun altındaki hücreleri gizle",
     "heatmapHideBelowTooltip": "Değeri bundan küçük olan hücreler boş bırakılır.",
+    "treemapShowBreadcrumb": "İçerik haritasını göster",
     "stateValueAlign": "Durum metni hizalaması",
     "mapCluster": "Noktaları kümele",
     "mapClusterRadius": "Küme boyutu (px)",
@@ -7690,6 +7691,7 @@
       "gauge": "Gösterge",
       "html": "HTML",
       "markdown": "Markdown",
+      "treemap": "Ağaç haritası",
       "sankey": "Sankey",
       "customChart": "Özel Grafik"
     },
@@ -8540,6 +8542,7 @@
     "breakdownTooltipHBar": "Daha net bir görünüm için verileri Y ekseninde farklı bölümlere bölmek için bu alanları kullanın.",
     "breakdownTooltipDefault": "Daha net bir görünüm için verileri X ekseninde farklı bölümlere bölmek için bu alanları kullanın.",
     "breakdownTooltipStateTimeline": "Bu alanın her değeri zaman çizelgesinde kendi satırını alır.",
+    "breakdownTooltipTreemap": "X ekseninin her kutucuğunu bu alanın her değeri için bir tane olmak üzere daha küçük kutucuklara böler.",
     "breakdownTooltipHostmap": "Hücreler bu alanlarla çerçevelenir: ilki dış grup, ikincisi iç gruptur.",
     "hostmapEntity": "Varlık",
     "hostmapValue": "Değer",

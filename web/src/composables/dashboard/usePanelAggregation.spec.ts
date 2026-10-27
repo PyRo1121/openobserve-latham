@@ -509,6 +509,44 @@ describe("usePanelAggregation", () => {
       });
     });
 
+    describe("treemap chart type", () => {
+      const yField = (functionName: string | null) => ({
+        functionName,
+        args: [{ type: "field" }, { type: "extra" }],
+      });
+
+      it("keeps one x, one y counted and one breakdown", () => {
+        const panelData = makePanelData("treemap");
+        const fields = panelData.data.queries[0].fields;
+        fields.x = [{ alias: "x1" }, { alias: "x2" }];
+        fields.y = [yField(null), yField("sum")];
+        fields.breakdown = [{ alias: "b1" }, { alias: "b2" }];
+        makeAggregation(panelData).resetAggregationFunction();
+        expect(fields.x).toEqual([{ alias: "x1" }]);
+        expect(fields.y.map((item: any) => item.functionName)).toEqual(["count"]);
+        expect(fields.breakdown).toEqual([{ alias: "b1" }]);
+      });
+
+      it("keeps the count of rows as the tile size instead of a raw column", () => {
+        const panelData = makePanelData("treemap");
+        const fields = panelData.data.queries[0].fields;
+        const countRows = {
+          alias: "y_axis_1",
+          functionName: "count",
+          args: [{ type: "field", value: { field: "_timestamp" } }],
+          isDerived: false,
+        };
+        fields.y = [countRows];
+        panelData.meta = {
+          streamFields: {
+            groupedFields: [{ name: "test_stream", schema: [{ name: "bytes", type: "Int64" }] }],
+          },
+        };
+        makeAggregation(panelData).resetAggregationFunction();
+        expect(fields.y).toEqual([countRows]);
+      });
+    });
+
     describe("starter queries", () => {
       it("leaves hand-written SQL in custom mode on a switch to a builder chart", () => {
         const panelData = makePanelData("state-timeline");
