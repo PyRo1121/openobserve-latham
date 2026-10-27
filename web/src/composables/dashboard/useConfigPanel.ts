@@ -361,6 +361,10 @@ export function useConfigPanel(
         label: [t("dashboard.heatmapCellGap"), t("dashboard.heatmapHideBelow")],
         visible: dashboardPanelData.data.type === "heatmap",
       },
+      "boxplot-whisker": {
+        label: t("dashboard.boxplotWhisker"),
+        visible: dashboardPanelData.data.type === "boxplot",
+      },
       "heatmap-histogram-mode": {
         label: t("dashboard.heatmapHistogramMode"),
         visible: !!promqlMode.value && dashboardPanelData.data.type === "heatmap",

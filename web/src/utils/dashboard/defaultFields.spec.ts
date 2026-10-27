@@ -21,8 +21,8 @@ import {
   hasValueColumn,
   buildDefaultSqlFields,
   buildDefaultBuilderFields,
-  keepRawValueFields,
   firstNumericField,
+  keepRawValueFields,
   SKIP_SEED_TYPES,
 } from "./defaultFields";
 
@@ -250,6 +250,47 @@ describe("defaultFields", () => {
       const q = query([field("_timestamp")], true);
       keepRawValueFields(q, grouped);
       expect(q.fields.y).toEqual([]);
+    });
+  });
+
+  describe("buildDefaultBuilderFields for box plot", () => {
+    const logsSchema = [{ name: "logs", schema: [{ name: "_timestamp" }] }];
+
+    it("seeds nothing without a numeric column", () => {
+      expect(buildDefaultBuilderFields("boxplot", "logs", logsSchema, "logs")).toEqual({
+        x: [],
+        y: [],
+      });
+    });
+
+    it("starts from the first numeric column that is not a timestamp", () => {
+      const schema = [
+        {
+          name: "demo_app",
+          schema: [
+            { name: "_timestamp", type: "Int64" },
+            { name: "ts", type: "Int64" },
+            { name: "host", type: "Utf8" },
+            { name: "enabled", type: "Boolean" },
+            { name: "latency_ms", type: "Float64" },
+            { name: "bytes", type: "Int64" },
+          ],
+        },
+        { name: "other", schema: [{ name: "first", type: "Int64" }] },
+      ];
+      const { x, y } = buildDefaultBuilderFields("boxplot", "logs", schema, "demo_app", "ts");
+      expect(x).toEqual([]);
+      expect(y).toHaveLength(1);
+      expect(y[0]).toMatchObject({
+        alias: "y_axis_1",
+        column: "latency_ms",
+        functionName: null,
+        args: [{ type: "field", value: { field: "latency_ms" } }],
+      });
+      expect(firstNumericField(schema, "other")).toBe("first");
+      expect(
+        firstNumericField([{ name: "s", schema: [{ name: "_timestamp", type: "Int64" }] }]),
+      ).toBeNull();
     });
   });
 });

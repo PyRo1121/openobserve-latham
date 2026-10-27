@@ -217,6 +217,7 @@ const i18n = createI18n({
         wellGroup: "Group",
         wellSubgroup: "Sub-group",
         wellSize: "Size",
+        wellCategory: "Category",
         joins: "Joins",
         addJoin: "Add Join",
       },
@@ -561,6 +562,15 @@ describe("DashboardQueryBuilder", () => {
       };
       expect(wells("bar")).toEqual(["X-Axis", "Y-Axis", "Breakdown"]);
       expect(wells("h-bar")).toEqual(["Y-Axis", "X-Axis", "Breakdown"]);
+    });
+
+    it("names the box plot wells by their job", () => {
+      const wells = (type: string) => {
+        wrapper?.unmount();
+        wrapper = createWrapper({ "data.type": type });
+        return [wrapper.vm.currentXLabel, wrapper.vm.currentYLabel];
+      };
+      expect(wells("boxplot")).toEqual(["Category", "Value"]);
     });
 
     it("should handle x-axis field removal", async () => {

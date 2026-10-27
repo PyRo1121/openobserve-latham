@@ -19,6 +19,7 @@ import {
   filterOption,
   filterSection,
   shouldShowThresholds,
+  shouldShowSeriesOverrides,
 } from "./useConfigPanel";
 import type { ConfigOption } from "./useConfigPanel";
 import {
@@ -1552,6 +1553,21 @@ describe("useConfigPanel – metric, gauge, pie, table, heatmap, state timeline 
     expect(shouldShowThresholds(table([]))).toBe(false);
     expect(shouldShowThresholds(table([barGauge]))).toBe(true);
     expect(shouldShowThresholds(table([barGauge], "promql"))).toBe(false);
+  });
+});
+
+describe("useConfigPanel – box plot options", () => {
+  const visible = (type: string, section: any, option: string) =>
+    makeComposable(makePanelData(type, {}), ref(false)).isConfigOptionVisible(section, option);
+
+  it("shows the whisker option on a box plot only", () => {
+    expect(visible("boxplot", "data", "boxplot-whisker")).toBe(true);
+    expect(visible("bar", "data", "boxplot-whisker")).toBe(false);
+  });
+
+  it("shows no thresholds or series overrides on a box plot", () => {
+    expect(shouldShowThresholds({ data: { type: "boxplot", config: {} } })).toBe(false);
+    expect(shouldShowSeriesOverrides({ data: { type: "boxplot" } })).toBe(false);
   });
 });
 

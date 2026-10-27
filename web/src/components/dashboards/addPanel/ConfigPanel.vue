@@ -791,6 +791,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </OInput>
         </div>
 
+        <template v-if="dashboardPanelData.data.type === 'boxplot'">
+          <OToggleGroup
+            v-show="isConfigOptionVisible('data', 'boxplot-whisker')"
+            type="single"
+            label-position="top"
+            :label="t('dashboard.boxplotWhisker')"
+            v-model="boxplotWhiskerModel"
+            data-test="dashboard-config-boxplot_whisker"
+            :data-test-selected-value="boxplotWhiskerModel"
+          >
+            <OToggleGroupItem
+              v-for="opt in boxplotWhiskerOptions"
+              :key="opt.value"
+              :value="opt.value"
+              size="sm"
+              data-test="dashboard-config-boxplot_whisker-option"
+              :data-test-label="opt.label"
+              >{{ opt.label }}</OToggleGroupItem
+            >
+          </OToggleGroup>
+        </template>
+
         <OSwitch
           v-if="promqlMode && dashboardPanelData.data.type === 'heatmap'"
           v-show="isConfigOptionVisible('data', 'heatmap-histogram-mode')"
@@ -3325,6 +3347,7 @@ import {
   STAT_TEXT_MODES,
 } from "@/utils/dashboard/metricOptions";
 import { GAUGE_STYLES, STATE_VALUE_ALIGNS } from "@/utils/dashboard/panelTypeOptions";
+import { BOXPLOT_WHISKERS } from "@/utils/dashboard/convertBoxplotData";
 import {
   DISTRIBUTION_ROW_LIMIT,
   isRawValueChart,
@@ -3749,6 +3772,12 @@ export default defineComponent({
       { label: t("dashboard.gaugeStyleSemi"), value: "semi" },
       { label: t("dashboard.gaugeStyleArc"), value: "arc" },
       { label: t("dashboard.gaugeStyleCircle"), value: "circle" },
+    ];
+    const boxplotWhiskerModel = choiceModel("boxplot_whisker", BOXPLOT_WHISKERS);
+    const boxplotWhiskerOptions: { label: I18nText; value: string }[] = [
+      defaultOption,
+      { label: t("dashboard.boxplotWhiskerMinMax"), value: "minmax" },
+      { label: t("dashboard.boxplotWhiskerIqr"), value: "iqr" },
     ];
     // Absent, the converters label SQL slices by percent and PromQL slices by all three, so the picker starts there.
     const pieLabelContentDefault = () =>
@@ -4514,6 +4543,7 @@ export default defineComponent({
         "pie",
         "donut",
         "gauge",
+        "boxplot",
         "sankey",
         "hostmap",
       ].includes(dashboardPanelData.data.type);
@@ -4867,6 +4897,8 @@ export default defineComponent({
       statTextModeOptions,
       gaugeStyleModel,
       gaugeStyleOptions,
+      boxplotWhiskerModel,
+      boxplotWhiskerOptions,
       pieLabelContentModel,
       pieLabelContentIsDefault,
       setPieLabelContent,

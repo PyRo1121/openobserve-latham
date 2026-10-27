@@ -444,7 +444,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex]
                       .fields.y[index]
                   "
-                  :allowAggregation="dashboardPanelData.data.type == 'heatmap' ? false : true"
+                  :allowAggregation="!['heatmap', 'boxplot'].includes(dashboardPanelData.data.type)"
                   :customQuery="
                     dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex]
                       .customQuery
@@ -770,6 +770,8 @@ export default defineComponent({
     // Hierarchy, row and category charts name each well by its job, as the sankey builder does.
     const roleLabels = computed((): { x: string; y: string; b: string | null } | null => {
       switch (dashboardPanelData.data.type) {
+        case "boxplot":
+          return { x: t("panel.wellCategory"), y: t("panel.value"), b: null };
         default:
           return null;
       }
@@ -1183,6 +1185,7 @@ export default defineComponent({
         case "hostmap":
           return t("dashboard.oneFieldMessage");
         case "gauge":
+        case "boxplot":
           return t("dashboard.dashboardQueryBuilder.addZeroOrOneLabelField");
         default:
           return t("dashboard.maxtwofieldMessage");
@@ -1212,6 +1215,7 @@ export default defineComponent({
           return t("dashboard.oneValueFieldMessage");
         case "heatmap":
         case "state-timeline":
+        case "boxplot":
         case "hostmap":
           return t("dashboard.oneFieldMessage");
         default:

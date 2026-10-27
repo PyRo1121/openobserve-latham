@@ -1559,6 +1559,28 @@ describe("configUtils", () => {
       expect(shouldShowCartesianAxisConfig(panel)).toBe(false);
     });
   });
+
+  describe("box plot", () => {
+    const panel = {
+      data: {
+        type: "boxplot",
+        queries: [{ config: {} }],
+        config: {
+          show_legends: true,
+          legends_position: "right",
+          legends_type: "plain",
+          trellis: { layout: null },
+        },
+      },
+    };
+
+    it("keeps gridlines but has no legend or axis width", () => {
+      expect(shouldShowGridlines(panel)).toBe(true);
+      expect(shouldShowLegendsToggle(panel)).toBe(false);
+      expect(shouldShowLegendPosition(panel)).toBe(false);
+      expect(shouldShowAxisConfig(panel)).toBe(false);
+    });
+  });
 });
 
 describe("pruneDependentOptions", () => {

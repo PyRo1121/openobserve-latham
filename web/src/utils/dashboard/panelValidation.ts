@@ -32,6 +32,7 @@ import {
 } from "@/utils/dashboard/panelTypeOptions";
 import { TABLE_DENSITIES, TABLE_FOOTER_CALCS } from "@/utils/dashboard/tableOptions";
 import { SPECIAL_VALUE_MATCHES } from "@/utils/dashboard/tableConfigUtils";
+import { BOXPLOT_WHISKERS } from "@/utils/dashboard/convertBoxplotData";
 import { HOSTMAP_MAX_GROUP_LEVELS } from "@/utils/dashboard/convertHostmapData";
 import { isGaugeFixedRangeValid, type GaugeQueryConfig } from "@/utils/dashboard/gaugeDial";
 import { MAX_LINE_THICKNESS, isValidLineThickness } from "@/utils/dashboard/promqlChartSeriesProps";
@@ -604,6 +605,23 @@ const validateChartFieldsConfiguration = (
       }
       break;
     }
+    case "boxplot": {
+      if (fields?.y?.length !== 1) {
+        const errorMsg =
+          pageKey === "logs"
+            ? t("dashboard.utils.unableToExtractValueField")
+            : t("dashboard.utils.addOneFieldFor", { label: yAxisLabel });
+        errors.push(errorMsg);
+      }
+      if (fields?.x?.length > 1) {
+        const errorMsg =
+          pageKey === "logs"
+            ? t("dashboard.utils.unableToExtractGroupingField")
+            : t("dashboard.utils.addAtMostOneFieldFor", { label: xAxisLabel });
+        errors.push(errorMsg);
+      }
+      break;
+    }
     case "sankey": {
       if (fields?.source == null) {
         const errorMsg =
@@ -927,6 +945,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "h-stacked",
     "heatmap",
     "state-timeline",
+    "boxplot",
     "hostmap",
     "metric",
     "gauge",
@@ -1115,6 +1134,7 @@ const PANEL_TYPE_CHOICE_KEYS: ReadonlyArray<[string, string[], readonly unknown[
   ["table_density", ["table"], TABLE_DENSITIES],
   ["state_value_align", ["state-timeline"], STATE_VALUE_ALIGNS],
   ["sort_order", ["pie", "donut"], SORT_ORDERS],
+  ["boxplot_whisker", ["boxplot"], BOXPLOT_WHISKERS],
 ];
 
 const PANEL_TYPE_LIST_KEYS: ReadonlyArray<[string, string[], readonly unknown[]]> = [

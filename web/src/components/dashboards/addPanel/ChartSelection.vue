@@ -136,6 +136,11 @@ export default defineComponent({
         id: "heatmap",
       },
       {
+        image: "img:" + getImageURL("images/dashboard/charts/boxplot.svg"),
+        title: t("dashboard.chartSelection.boxplot"),
+        id: "boxplot",
+      },
+      {
         image: "img:" + getImageURL("images/dashboard/charts/state-timeline.svg"),
         title: t("dashboard.stateTimelineLabel"),
         id: "state-timeline",
