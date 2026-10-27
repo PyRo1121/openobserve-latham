@@ -663,6 +663,7 @@ export const ALL_CHART_TYPES = [
   "sankey",
   "html",
   "markdown",
+  "flame-graph",
   "custom_chart",
 ] as const;
 

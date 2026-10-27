@@ -252,4 +252,14 @@ describe("defaultFields", () => {
       expect(q.fields.y).toEqual([]);
     });
   });
+
+  describe("buildDefaultBuilderFields for the flame graph", () => {
+    it("seeds nothing", () => {
+      const logsSchema = [{ name: "logs", schema: [{ name: "_timestamp" }] }];
+      expect(buildDefaultBuilderFields("flame-graph", "logs", logsSchema, "logs")).toEqual({
+        x: [],
+        y: [],
+      });
+    });
+  });
 });

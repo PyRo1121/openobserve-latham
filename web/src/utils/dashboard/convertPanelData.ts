@@ -32,6 +32,7 @@ import { applyPanelTypeOptions } from "./panelTypeOptions";
 import { applyMetricOptions, isStatChangeOn, splitStatChangeResults } from "./metricOptions";
 import { applyGeoMapClusters, mapClusterRadius } from "./geoMapCluster";
 import { applyTableOptions } from "./tableOptions";
+import { convertFlameGraphPanelData } from "./convertFlameGraphPanelData";
 import { convertHostmapData } from "./convertHostmapData";
 /**
  * Converts panel data based on the panel schema and data.
@@ -158,6 +159,12 @@ export const convertPanelData = async (
         console.error(error);
         return {};
       }
+    }
+    case "flame-graph": {
+      return {
+        chartType: panelSchema.type,
+        ...convertFlameGraphPanelData(panelSchema, data),
+      };
     }
     case "table": {
       // Check if PromQL query type

@@ -779,6 +779,9 @@ const validatePanelContentByType = (t: TranslateFn, panel: any, errors: string[]
         t("dashboard.utils.enterCustomChartQuery"),
       );
       break;
+    case "flame-graph":
+      validateQueriesNotEmpty(t, [panel?.queries?.[0]], errors);
+      break;
   }
 };
 
@@ -937,6 +940,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "custom_chart",
     "html",
     "markdown",
+    "flame-graph",
   ];
 
   if (!allowedTypes.includes(panel?.type)) {

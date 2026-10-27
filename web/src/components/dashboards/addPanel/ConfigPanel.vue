@@ -3314,6 +3314,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <SparklineConfig />
       </div>
     </OCollapsible>
+
+    <OCollapsible
+      variant="config"
+      v-if="dashboardPanelData.data.type == 'flame-graph'"
+      v-show="isSectionVisible('flameGraph')"
+      :model-value="isExpanded('flameGraph')"
+      :icon="SECTION_ICONS.flameGraph"
+      @update:modelValue="
+        (v) => {
+          expandedSections.flameGraph = v;
+        }
+      "
+      :label="t('dashboard.chartSelection.flameGraph')"
+      class="border-card-glass-border border-t border-solid"
+    >
+      <div class="o2-input box-border flex flex-col gap-2.5 overflow-x-hidden px-3 py-2.5">
+        <FlameGraphPanelConfig
+          :is-option-visible="(id: string) => isConfigOptionVisible('flameGraph', id)"
+        />
+      </div>
+    </OCollapsible>
   </div>
 </template>
 
@@ -3370,6 +3391,7 @@ import {
 } from "@/utils/dashboard/heatmapYAxis";
 import {
   computed,
+  defineAsyncComponent,
   defineComponent,
   inject,
   nextTick,
@@ -3474,6 +3496,8 @@ import { SECTION_ICONS } from "@/utils/dashboard/searchLabelsConfig";
 import { TOOLTIP_SORT_VALUES } from "@/utils/dashboard/tooltipSort";
 import { getFieldLabel } from "@/utils/dashboard/fieldLabel";
 
+const FlameGraphPanelConfig = defineAsyncComponent(() => import("./FlameGraphPanelConfig.vue"));
+
 export default defineComponent({
   components: {
     OTabs,
@@ -3498,6 +3522,7 @@ export default defineComponent({
     ColorPaletteDropDown,
     BackGroundColorConfig,
     SparklineConfig,
+    FlameGraphPanelConfig,
     PromQLChartConfig,
     OButton,
     OTooltip,

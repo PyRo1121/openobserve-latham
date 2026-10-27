@@ -44,6 +44,7 @@ describe("searchLabelsConfig", () => {
     "metric",
     "background",
     "sparkline",
+    "flameGraph",
   ] as const;
 
   describe("ORDERED_SECTION_IDS", () => {

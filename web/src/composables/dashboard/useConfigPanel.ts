@@ -126,7 +126,9 @@ export const shouldShowHeatmapYBucket = (dashboardPanelData: any, promqlMode: bo
 };
 
 /** The only sections an HTML panel shows; every other section configures an ECharts option it never builds. */
-export const HTML_PANEL_SECTIONS: Record<string, readonly SectionId[]> = {};
+export const HTML_PANEL_SECTIONS: Record<string, readonly SectionId[]> = {
+  "flame-graph": ["general", "data", "flameGraph"],
+};
 
 export const isSectionAllowedForType = (sectionId: SectionId, type: unknown): boolean =>
   !isHtmlPanel(type) || (HTML_PANEL_SECTIONS[type as string] ?? []).includes(sectionId);
@@ -858,6 +860,12 @@ export function useConfigPanel(
             dashboardPanelData.data.queryType === "promql" &&
             allVisibleQueriesInstant(dashboardPanelData)
           ),
+      },
+    },
+    flameGraph: {
+      "flame-graph-fields": {
+        label: [t("dashboard.flameGraphStackField"), t("dashboard.flameGraphValueField")],
+        visible: dashboardPanelData.data.type === "flame-graph",
       },
     },
   }));

@@ -26,10 +26,18 @@ import {
 // Types that reset their own queries on a switch, so no builder state carries into them.
 const NON_BUILDER_TYPES = ["html", "markdown", "custom_chart"];
 
-// The SQL each custom-SQL panel type starts from, keyed by panel type.
-const STARTER_QUERIES: Record<string, (stream: string, timestampColumn: string) => string> = {};
+/** The SQL a new flame graph panel starts from: folded stacks and their summed samples. */
+export const defaultFlameGraphPanelQuery = (stream: string): string =>
+  stream ? `SELECT stack, sum(samples) AS value FROM "${stream}" GROUP BY stack` : "";
 
-const STARTER_QUERY_PATTERNS: RegExp[] = [];
+// The SQL each custom-SQL panel type starts from, keyed by panel type.
+const STARTER_QUERIES: Record<string, (stream: string, timestampColumn: string) => string> = {
+  "flame-graph": (stream) => defaultFlameGraphPanelQuery(stream),
+};
+
+const STARTER_QUERY_PATTERNS: RegExp[] = [
+  /^SELECT stack, sum\(samples\) AS value FROM "[^"]*" GROUP BY stack$/,
+];
 
 /** Whether `text` is still the untouched starter SQL a panel was seeded with. */
 export const isPanelStarterQuery = (text: unknown): boolean =>
