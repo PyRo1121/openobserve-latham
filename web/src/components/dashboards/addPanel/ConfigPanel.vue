@@ -791,6 +791,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </OInput>
         </div>
 
+        <template v-if="dashboardPanelData.data.type === 'node-graph'">
+          <OToggleGroup
+            v-show="isConfigOptionVisible('data', 'node-graph-layout')"
+            type="single"
+            label-position="top"
+            :label="t('dashboard.nodeGraphLayout')"
+            v-model="nodeGraphLayoutModel"
+            data-test="dashboard-config-node_graph_layout"
+            :data-test-selected-value="nodeGraphLayoutModel"
+          >
+            <OToggleGroupItem
+              v-for="opt in nodeGraphLayoutOptions"
+              :key="opt.value"
+              :value="opt.value"
+              size="sm"
+              data-test="dashboard-config-node_graph_layout-option"
+              :data-test-label="opt.label"
+              >{{ opt.label }}</OToggleGroupItem
+            >
+          </OToggleGroup>
+          <OSwitch
+            v-show="isConfigOptionVisible('data', 'node-graph-edge-labels')"
+            :model-value="dashboardPanelData.data.config.node_graph_show_edge_labels === true"
+            :label="t('dashboard.nodeGraphShowEdgeLabels')"
+            data-test="dashboard-config-node_graph_show_edge_labels"
+            size="lg"
+            @update:model-value="
+              (value: any) => setFlagConfig('node_graph_show_edge_labels', value)
+            "
+          />
+        </template>
+
         <OSwitch
           v-if="promqlMode && dashboardPanelData.data.type === 'heatmap'"
           v-show="isConfigOptionVisible('data', 'heatmap-histogram-mode')"
@@ -3325,6 +3357,7 @@ import {
   STAT_TEXT_MODES,
 } from "@/utils/dashboard/metricOptions";
 import { GAUGE_STYLES, STATE_VALUE_ALIGNS } from "@/utils/dashboard/panelTypeOptions";
+import { NODE_GRAPH_LAYOUTS } from "@/utils/dashboard/convertNodeGraphData";
 import {
   DISTRIBUTION_ROW_LIMIT,
   isRawValueChart,
@@ -3749,6 +3782,12 @@ export default defineComponent({
       { label: t("dashboard.gaugeStyleSemi"), value: "semi" },
       { label: t("dashboard.gaugeStyleArc"), value: "arc" },
       { label: t("dashboard.gaugeStyleCircle"), value: "circle" },
+    ];
+    const nodeGraphLayoutModel = choiceModel("node_graph_layout", NODE_GRAPH_LAYOUTS);
+    const nodeGraphLayoutOptions: { label: I18nText; value: string }[] = [
+      defaultOption,
+      { label: t("dashboard.nodeGraphLayoutForce"), value: "force" },
+      { label: t("dashboard.nodeGraphLayoutCircular"), value: "circular" },
     ];
     // Absent, the converters label SQL slices by percent and PromQL slices by all three, so the picker starts there.
     const pieLabelContentDefault = () =>
@@ -4514,6 +4553,7 @@ export default defineComponent({
         "pie",
         "donut",
         "gauge",
+        "node-graph",
         "sankey",
         "hostmap",
       ].includes(dashboardPanelData.data.type);
@@ -4867,6 +4907,8 @@ export default defineComponent({
       statTextModeOptions,
       gaugeStyleModel,
       gaugeStyleOptions,
+      nodeGraphLayoutModel,
+      nodeGraphLayoutOptions,
       pieLabelContentModel,
       pieLabelContentIsDefault,
       setPieLabelContent,

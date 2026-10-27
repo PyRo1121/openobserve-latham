@@ -20,7 +20,7 @@ import i18n from "@/locales";
 import { raw } from "@/types/i18n";
 import store from "@/test/unit/helpers/store";
 import { use as echartsUse } from "echarts/core";
-import { LineChart } from "echarts/charts";
+import { GraphChart, LineChart } from "echarts/charts";
 import { applyLegendConfiguration } from "@/utils/dashboard/legendConfiguration";
 import { applySeriesOverrides } from "@/utils/dashboard/seriesOverrides";
 
@@ -120,6 +120,10 @@ const registeredAtImport = vi.mocked(echartsUse).mock.calls.flat(2);
 describe("ChartRenderer series registration", () => {
   it("registers the line series", () => {
     expect(registeredAtImport).toContain(LineChart);
+  });
+
+  it("registers the graph series the node graph draws", () => {
+    expect(registeredAtImport).toContain(GraphChart);
   });
 });
 

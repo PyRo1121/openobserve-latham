@@ -583,4 +583,18 @@ describe("usePanelFields", () => {
       expect(fields.promqlMode.value).toBe(true);
     });
   });
+
+  describe("node graph slots", () => {
+    it("takes no x, y or breakdown fields", () => {
+      panelData.data.type = "node-graph";
+      for (let i = 0; i < 3; i++) {
+        fields.addXAxisItem({ name: `field_x_${i}` });
+        fields.addYAxisItem({ name: `field_y_${i}` });
+        fields.addBreakDownAxisItem({ name: `field_breakdown_${i}` });
+      }
+      expect(panelData.data.queries[0].fields.x).toHaveLength(0);
+      expect(panelData.data.queries[0].fields.y).toHaveLength(0);
+      expect(panelData.data.queries[0].fields.breakdown).toHaveLength(0);
+    });
+  });
 });

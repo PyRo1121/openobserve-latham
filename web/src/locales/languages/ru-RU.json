@@ -7419,6 +7419,10 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Скрывать ячейки меньше",
     "heatmapHideBelowTooltip": "Ячейки со значением меньше этого остаются пустыми.",
+    "nodeGraphLayout": "Расположение",
+    "nodeGraphLayoutForce": "Силовое",
+    "nodeGraphLayoutCircular": "Круговое",
+    "nodeGraphShowEdgeLabels": "Показывать значения рёбер",
     "stateValueAlign": "Выравнивание текста состояния",
     "mapCluster": "Группировать точки",
     "mapClusterRadius": "Размер кластера (px)",
@@ -7690,6 +7694,7 @@
       "gauge": "Датчик",
       "html": "HTML",
       "markdown": "Markdown",
+      "nodeGraph": "Граф узлов",
       "sankey": "Санкей",
       "customChart": "Пользовательский график"
     },

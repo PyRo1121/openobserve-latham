@@ -661,6 +661,7 @@ export const ALL_CHART_TYPES = [
   "hostmap",
   "geomap",
   "sankey",
+  "node-graph",
   "html",
   "markdown",
   "custom_chart",
@@ -695,4 +696,5 @@ export const AGGREGATION_REQUIRED_CHART_TYPES: ChartType[] = [
   "hostmap",
   "geomap",
   "sankey",
+  "node-graph",
 ];

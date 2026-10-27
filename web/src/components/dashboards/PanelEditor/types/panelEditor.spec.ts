@@ -320,6 +320,7 @@ describe("panelEditor types and utilities", () => {
         expect(ALL_CHART_TYPES).toContain("markdown");
         expect(ALL_CHART_TYPES).toContain("custom_chart");
         expect(ALL_CHART_TYPES).toContain("state-timeline");
+        expect(ALL_CHART_TYPES).toContain("node-graph");
         expect(ALL_CHART_TYPES).toContain("hostmap");
       });
 

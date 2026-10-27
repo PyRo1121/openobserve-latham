@@ -7419,6 +7419,10 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Ocultar celdas por debajo de",
     "heatmapHideBelowTooltip": "Las celdas con un valor inferior quedan vacías.",
+    "nodeGraphLayout": "Diseño",
+    "nodeGraphLayoutForce": "Fuerza",
+    "nodeGraphLayoutCircular": "Circular",
+    "nodeGraphShowEdgeLabels": "Mostrar valores de las aristas",
     "stateValueAlign": "Alineación del texto de estado",
     "mapCluster": "Agrupar puntos",
     "mapClusterRadius": "Tamaño del grupo (px)",
@@ -7690,6 +7694,7 @@
       "gauge": "Medidor",
       "html": "HTML",
       "markdown": "Markdown",
+      "nodeGraph": "Grafo de nodos",
       "sankey": "Sankey",
       "customChart": "Gráfico personalizado"
     },

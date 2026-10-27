@@ -513,6 +513,7 @@ export const usePanelAggregation = ({
         });
         break;
       case "sankey":
+      case "node-graph":
         dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields.x = [];
         dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields.y = [];
         dashboardPanelData.data.queries[dashboardPanelData.layout.currentQueryIndex].fields.z = [];

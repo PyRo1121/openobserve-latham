@@ -7414,6 +7414,10 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "隱藏低於此值的儲存格",
     "heatmapHideBelowTooltip": "值低於此值的儲存格保持空白。",
+    "nodeGraphLayout": "版面配置",
+    "nodeGraphLayoutForce": "力導向",
+    "nodeGraphLayoutCircular": "環形",
+    "nodeGraphShowEdgeLabels": "顯示邊的值",
     "stateValueAlign": "狀態文字對齊",
     "mapCluster": "聚合點",
     "mapClusterRadius": "聚合大小 (px)",
@@ -7685,6 +7689,7 @@
       "gauge": "儀表",
       "html": "HTML",
       "markdown": "Markdown",
+      "nodeGraph": "節點圖",
       "sankey": "桑基",
       "customChart": "自訂圖表"
     },

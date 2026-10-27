@@ -7419,6 +7419,10 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "إخفاء الخلايا الأقل من",
     "heatmapHideBelowTooltip": "تبقى الخلايا ذات القيمة الأقل من ذلك فارغة.",
+    "nodeGraphLayout": "التخطيط",
+    "nodeGraphLayoutForce": "قوة",
+    "nodeGraphLayoutCircular": "دائري",
+    "nodeGraphShowEdgeLabels": "إظهار قيم الحواف",
     "stateValueAlign": "محاذاة نص الحالة",
     "mapCluster": "تجميع النقاط",
     "mapClusterRadius": "حجم المجموعة (px)",
@@ -7690,6 +7694,7 @@
       "gauge": "المقياس",
       "html": "HTML",
       "markdown": "ماركداون",
+      "nodeGraph": "مخطط العقد",
       "sankey": "سانكي",
       "customChart": "المخطط المخصص"
     },

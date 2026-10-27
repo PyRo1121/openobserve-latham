@@ -7419,6 +7419,10 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Cellen verbergen onder",
     "heatmapHideBelowTooltip": "Cellen met een lagere waarde blijven leeg.",
+    "nodeGraphLayout": "Indeling",
+    "nodeGraphLayoutForce": "Kracht",
+    "nodeGraphLayoutCircular": "Cirkelvormig",
+    "nodeGraphShowEdgeLabels": "Waarden van verbindingen tonen",
     "stateValueAlign": "Uitlijning van statustekst",
     "mapCluster": "Punten clusteren",
     "mapClusterRadius": "Clustergrootte (px)",
@@ -7690,6 +7694,7 @@
       "gauge": "Meter",
       "html": "HTML",
       "markdown": "Markdown",
+      "nodeGraph": "Knooppuntgrafiek",
       "sankey": "Sankey",
       "customChart": "Aangepaste grafiek"
     },

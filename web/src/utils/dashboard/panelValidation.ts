@@ -32,6 +32,7 @@ import {
 } from "@/utils/dashboard/panelTypeOptions";
 import { TABLE_DENSITIES, TABLE_FOOTER_CALCS } from "@/utils/dashboard/tableOptions";
 import { SPECIAL_VALUE_MATCHES } from "@/utils/dashboard/tableConfigUtils";
+import { NODE_GRAPH_LAYOUTS } from "@/utils/dashboard/convertNodeGraphData";
 import { HOSTMAP_MAX_GROUP_LEVELS } from "@/utils/dashboard/convertHostmapData";
 import { isGaugeFixedRangeValid, type GaugeQueryConfig } from "@/utils/dashboard/gaugeDial";
 import { MAX_LINE_THICKNESS, isValidLineThickness } from "@/utils/dashboard/promqlChartSeriesProps";
@@ -604,7 +605,8 @@ const validateChartFieldsConfiguration = (
       }
       break;
     }
-    case "sankey": {
+    case "sankey":
+    case "node-graph": {
       if (fields?.source == null) {
         const errorMsg =
           pageKey === "logs"
@@ -934,6 +936,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "maps",
     "table",
     "sankey",
+    "node-graph",
     "custom_chart",
     "html",
     "markdown",
@@ -1115,6 +1118,7 @@ const PANEL_TYPE_CHOICE_KEYS: ReadonlyArray<[string, string[], readonly unknown[
   ["table_density", ["table"], TABLE_DENSITIES],
   ["state_value_align", ["state-timeline"], STATE_VALUE_ALIGNS],
   ["sort_order", ["pie", "donut"], SORT_ORDERS],
+  ["node_graph_layout", ["node-graph"], NODE_GRAPH_LAYOUTS],
 ];
 
 const PANEL_TYPE_LIST_KEYS: ReadonlyArray<[string, string[], readonly unknown[]]> = [

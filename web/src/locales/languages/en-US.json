@@ -7417,6 +7417,10 @@
     "heatmapCellGapPlaceholder": "1",
     "heatmapHideBelow": "Hide cells below",
     "heatmapHideBelowTooltip": "Cells with a value below this are left empty.",
+    "nodeGraphLayout": "Layout",
+    "nodeGraphLayoutForce": "Force",
+    "nodeGraphLayoutCircular": "Circular",
+    "nodeGraphShowEdgeLabels": "Show edge values",
     "stateValueAlign": "State text alignment",
     "mapCluster": "Cluster points",
     "mapClusterRadius": "Cluster size (px)",
@@ -7688,6 +7692,7 @@
       "gauge": "Gauge",
       "html": "HTML",
       "markdown": "Markdown",
+      "nodeGraph": "Node graph",
       "sankey": "Sankey",
       "customChart": "Custom Chart"
     },

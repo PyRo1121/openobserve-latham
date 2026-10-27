@@ -361,6 +361,14 @@ export function useConfigPanel(
         label: [t("dashboard.heatmapCellGap"), t("dashboard.heatmapHideBelow")],
         visible: dashboardPanelData.data.type === "heatmap",
       },
+      "node-graph-layout": {
+        label: t("dashboard.nodeGraphLayout"),
+        visible: dashboardPanelData.data.type === "node-graph",
+      },
+      "node-graph-edge-labels": {
+        label: t("dashboard.nodeGraphShowEdgeLabels"),
+        visible: dashboardPanelData.data.type === "node-graph",
+      },
       "heatmap-histogram-mode": {
         label: t("dashboard.heatmapHistogramMode"),
         visible: !!promqlMode.value && dashboardPanelData.data.type === "heatmap",

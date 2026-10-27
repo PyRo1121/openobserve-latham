@@ -19,6 +19,7 @@ import {
   filterOption,
   filterSection,
   shouldShowThresholds,
+  shouldShowSeriesOverrides,
 } from "./useConfigPanel";
 import type { ConfigOption } from "./useConfigPanel";
 import {
@@ -1552,6 +1553,22 @@ describe("useConfigPanel – metric, gauge, pie, table, heatmap, state timeline 
     expect(shouldShowThresholds(table([]))).toBe(false);
     expect(shouldShowThresholds(table([barGauge]))).toBe(true);
     expect(shouldShowThresholds(table([barGauge], "promql"))).toBe(false);
+  });
+});
+
+describe("useConfigPanel – node graph options", () => {
+  const visible = (type: string, section: any, option: string) =>
+    makeComposable(makePanelData(type, {}), ref(false)).isConfigOptionVisible(section, option);
+
+  it("shows each option on its own chart type only", () => {
+    expect(visible("node-graph", "data", "node-graph-layout")).toBe(true);
+    expect(visible("node-graph", "data", "node-graph-edge-labels")).toBe(true);
+    expect(visible("sankey", "data", "node-graph-layout")).toBe(false);
+  });
+
+  it("shows no thresholds or series overrides on a node graph", () => {
+    expect(shouldShowThresholds({ data: { type: "node-graph", config: {} } })).toBe(false);
+    expect(shouldShowSeriesOverrides({ data: { type: "node-graph" } })).toBe(false);
   });
 });
 
