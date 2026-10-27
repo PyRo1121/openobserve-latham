@@ -32,6 +32,11 @@ import {
 } from "@/utils/dashboard/panelTypeOptions";
 import { TABLE_DENSITIES, TABLE_FOOTER_CALCS } from "@/utils/dashboard/tableOptions";
 import { SPECIAL_VALUE_MATCHES } from "@/utils/dashboard/tableConfigUtils";
+import {
+  ALERT_LIST_MAX_LIMIT,
+  ALERT_LIST_SORTS,
+  ALERT_LIST_STATES,
+} from "@/utils/dashboard/alertListPanel";
 import { HOSTMAP_MAX_GROUP_LEVELS } from "@/utils/dashboard/convertHostmapData";
 import { isGaugeFixedRangeValid, type GaugeQueryConfig } from "@/utils/dashboard/gaugeDial";
 import { MAX_LINE_THICKNESS, isValidLineThickness } from "@/utils/dashboard/promqlChartSeriesProps";
@@ -937,6 +942,7 @@ const validatePanelContent = (t: TranslateFn, panel: any): string[] => {
     "custom_chart",
     "html",
     "markdown",
+    "alert-list",
   ];
 
   if (!allowedTypes.includes(panel?.type)) {
@@ -1115,11 +1121,13 @@ const PANEL_TYPE_CHOICE_KEYS: ReadonlyArray<[string, string[], readonly unknown[
   ["table_density", ["table"], TABLE_DENSITIES],
   ["state_value_align", ["state-timeline"], STATE_VALUE_ALIGNS],
   ["sort_order", ["pie", "donut"], SORT_ORDERS],
+  ["alert_list_sort", ["alert-list"], ALERT_LIST_SORTS],
 ];
 
 const PANEL_TYPE_LIST_KEYS: ReadonlyArray<[string, string[], readonly unknown[]]> = [
   ["pie_label_content", ["pie", "donut"], PIE_LABEL_CONTENTS],
   ["table_footer_calcs", ["table"], TABLE_FOOTER_CALCS],
+  ["alert_list_state", ["alert-list"], ALERT_LIST_STATES],
 ];
 
 // [key, chart types, lowest allowed, highest allowed, lowest is exclusive]
@@ -1130,6 +1138,7 @@ const PANEL_TYPE_RANGE_KEYS: ReadonlyArray<[string, string[], number, number, bo
   ["donut_inner_radius", ["donut"], 0, 95, false],
   ["heatmap_cell_gap", ["heatmap"], 0, Infinity, false],
   ["map_cluster_radius", ["geomap"], 0, Infinity, true],
+  ["alert_list_max", ["alert-list"], 1, ALERT_LIST_MAX_LIMIT, false],
 ];
 
 const validatePanelTypeChoices = (t: TranslateFn, panel: any, errors: string[]) => {

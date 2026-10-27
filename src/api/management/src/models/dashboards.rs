@@ -543,6 +543,10 @@ mod tests {
             "map_cluster_radius": 60.0
         });
         let rest3 = serde_json::json!({
+            "alert_list_state": ["firing", "ok"],
+            "alert_list_max": 10.0,
+            "alert_list_sort": "time",
+            "alert_list_folder": "",
             "override_config": [{
                 "field": {"matchBy": "series", "value": "errors"},
                 "config": [

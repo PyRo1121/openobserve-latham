@@ -663,6 +663,7 @@ export const ALL_CHART_TYPES = [
   "sankey",
   "html",
   "markdown",
+  "alert-list",
   "custom_chart",
 ] as const;
 

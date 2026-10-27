@@ -70,6 +70,11 @@ describe("buildPrefillFromPanel", () => {
     expect(isPrefillBlocked(normalizePrefill(p))).toBe(false);
   });
 
+  it("warns on an alert list, which has no query to alert on", () => {
+    const p = buildPrefillFromPanel(sqlPanel({ panelType: "alert-list" }), makeId);
+    expect(p.warnings.map((w) => w.key)).toContain("unsupportedPanelType");
+  });
+
   it("blocks a panel with no queries", () => {
     const p = normalizePrefill(buildPrefillFromPanel(sqlPanel({ queries: [] }), makeId));
     expect(p.warnings.map((w) => w.key)).toContain("noQueries");

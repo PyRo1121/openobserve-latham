@@ -161,6 +161,11 @@ export default defineComponent({
         id: "gauge",
       },
       {
+        image: "img:" + getImageURL("images/dashboard/charts/alert-list.svg"),
+        title: t("dashboard.chartSelection.alertList"),
+        id: "alert-list",
+      },
+      {
         image: "img:" + getImageURL("images/dashboard/charts/HTML.svg"),
         title: t("dashboard.chartSelection.html"),
         id: "html",

@@ -24,7 +24,7 @@ import {
 } from "@/utils/dashboard/convertHostmapData";
 
 // Types that reset their own queries on a switch, so no builder state carries into them.
-const NON_BUILDER_TYPES = ["html", "markdown", "custom_chart"];
+const NON_BUILDER_TYPES = ["html", "markdown", "custom_chart", "alert-list"];
 
 // The SQL each custom-SQL panel type starts from, keyed by panel type.
 const STARTER_QUERIES: Record<string, (stream: string, timestampColumn: string) => string> = {};
@@ -456,6 +456,12 @@ export const usePanelAggregation = ({
         dashboardPanelData.data.queries[
           dashboardPanelData.layout.currentQueryIndex
         ].config.time_shift = [];
+        break;
+      }
+      case "alert-list": {
+        // The alert list reads the alerts API, so the panel keeps one empty query.
+        resetToSingleQuery();
+        dashboardPanelData.data.queryType = "";
         break;
       }
       case "custom_chart": {
