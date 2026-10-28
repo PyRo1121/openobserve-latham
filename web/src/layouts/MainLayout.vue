@@ -541,6 +541,12 @@ export default defineComponent({
         name: "dashboards",
       },
       {
+        title: raw("Web traffic"),
+        icon: "public",
+        link: "/traffic",
+        name: "webTraffic",
+      },
+      {
         title: t("menu.index"),
         icon: "window",
         link: "/streams",

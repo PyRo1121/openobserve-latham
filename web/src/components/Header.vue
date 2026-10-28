@@ -224,7 +224,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <!-- AI CHAT TOGGLE: Enterprise feature to toggle AI chat panel.
            Leads the utility-icon cluster, set off by a separator from the
            org selector so it reads as the primary action in this group. -->
-          <template v-if="store.state.zoConfig.ai_enabled">
+          <template v-if="store.state.zoConfig.ai_enabled && $route.name !== 'aiAssistant'">
             <OButton
               variant="ghost"
               size="icon-toolbar"

@@ -47,9 +47,9 @@ describe("useOSRoutes", () => {
     expect(homeChildRoutes.slice(0, mockIngestionRoutes.length)).toEqual(mockIngestionRoutes);
   });
 
-  it("homeChildRoutes has one extra route (the AI Monitor shell) beyond the mocked ingestion routes", () => {
+  it("homeChildRoutes includes traffic and the native AI shell beyond ingestion", () => {
     const { homeChildRoutes } = useOSRoutes();
-    expect(homeChildRoutes).toHaveLength(mockIngestionRoutes.length + 1);
+    expect(homeChildRoutes).toHaveLength(mockIngestionRoutes.length + 2);
   });
 
   it("homeChildRoutes items match the mocked route objects", () => {
@@ -58,12 +58,13 @@ describe("useOSRoutes", () => {
     expect(homeChildRoutes[1]).toEqual({ path: "ingestion/logs", name: "ingestLogs" });
   });
 
-  it("registers the AI Monitor shell with only LLM Insights + Sessions as children", () => {
+  it("registers the native assistant, insights and sessions inside the AI shell", () => {
     const { homeChildRoutes } = useOSRoutes();
     const aiRoute = homeChildRoutes.find((r: any) => r.path === "ai");
     expect(aiRoute).toBeDefined();
     expect(aiRoute.children.map((c: any) => c.name)).toEqual([
       "aiObservability",
+      "aiAssistant",
       "aiLLMInsights",
       "aiSessions",
     ]);
@@ -75,12 +76,12 @@ describe("useOSRoutes", () => {
       return homeChildRoutes.find((r: any) => r.path === "ai") as any;
     }
 
-    it("redirects the bare /ai path to aiLLMInsights, same as the enterprise tree", () => {
+    it("redirects the bare /ai path to the native assistant", () => {
       const redirectChild = aiRoute().children[0];
       expect(redirectChild).toEqual({
         path: "",
         name: "aiObservability",
-        redirect: { name: "aiLLMInsights" },
+        redirect: { name: "aiAssistant" },
       });
     });
 
@@ -91,13 +92,15 @@ describe("useOSRoutes", () => {
     });
 
     it("lazy-loads each child's component rather than importing it eagerly", () => {
-      const [, llmInsightsChild, sessionsChild] = aiRoute().children;
+      const [, assistantChild, llmInsightsChild, sessionsChild] = aiRoute().children;
+      expect(typeof assistantChild.component).toBe("function");
       expect(typeof llmInsightsChild.component).toBe("function");
       expect(typeof sessionsChild.component).toBe("function");
     });
 
     it("gives llm-insights and sessions their own distinct paths under /ai", () => {
-      const [, llmInsightsChild, sessionsChild] = aiRoute().children;
+      const [, assistantChild, llmInsightsChild, sessionsChild] = aiRoute().children;
+      expect(assistantChild.path).toBe("assistant");
       expect(llmInsightsChild.path).toBe("llm-insights");
       expect(sessionsChild.path).toBe("sessions");
     });

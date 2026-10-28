@@ -35,6 +35,13 @@ const useOSRoutes = () => {
   const homeChildRoutes: any[] = [
     ...useIngestionRoutes(),
     {
+      path: "traffic",
+      name: "webTraffic",
+      component: () => import("@/views/WebTrafficView.vue"),
+      beforeEnter: routeGuard,
+      meta: { title: "Web traffic", keepAlive: false },
+    },
+    {
       path: "ai",
       component: () => import("@/enterprise/views/AIObservability/Index.vue"),
       beforeEnter(to: any, from: any, next: any) {

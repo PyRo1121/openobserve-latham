@@ -66,6 +66,7 @@
               variant="ghost"
               size="icon-sm"
               data-test="ai-chat-expand-btn"
+              v-if="!centeredStart"
               @click="toggleExpand"
             >
               <OIcon
@@ -83,7 +84,7 @@
                 "
               />
             </OButton>
-            <OButton variant="ghost" size="icon-sm" @click="$emit('close')">
+            <OButton v-if="!centeredStart" variant="ghost" size="icon-sm" @click="$emit('close')">
               <OIcon name="close" size="sm" />
             </OButton>
           </div>
