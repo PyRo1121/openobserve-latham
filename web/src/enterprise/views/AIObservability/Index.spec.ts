@@ -83,12 +83,14 @@ beforeEach(() => {
 });
 
 describe("AIObservabilityShell — OSS builds (isEnterprise and isCloud both false)", () => {
-  it("shows only the Monitor group, with exactly LLM Insights + Sessions", async () => {
+  it("shows the native DeepSeek assistant alongside the OSS monitoring views", async () => {
     const wrapper = await mountShell();
     const groups = groupsOf(wrapper);
-    expect(groups).toHaveLength(1);
-    expect(groups[0].label).toBe("aiObservability.sections.monitor");
-    expect(groups[0].items.map((i) => i.key)).toEqual(["llmInsights", "sessions"]);
+    expect(groups).toHaveLength(2);
+    expect(groups[0].label).toBe("Assist");
+    expect(groups[0].items[0]).toMatchObject({ key: "assistant", to: { name: "aiAssistant" } });
+    expect(groups[1].label).toBe("aiObservability.sections.monitor");
+    expect(groups[1].items.map((i) => i.key)).toEqual(["llmInsights", "sessions"]);
   });
 
   it("does not link to Agent Graph or Agent Behavior — Monitor's other two items have no OSS route", async () => {
@@ -108,9 +110,9 @@ describe("AIObservabilityShell — OSS builds (isEnterprise and isCloud both fal
 
   it("points LLM Insights and Sessions at the same route names the enterprise rail uses", async () => {
     const wrapper = await mountShell();
-    const items = groupsOf(wrapper)[0].items;
-    expect((items[0].to as any).name).toBe("aiLLMInsights");
-    expect((items[1].to as any).name).toBe("aiSessions");
+    const items = groupsOf(wrapper)[1].items;
+    expect(items[0].to).toMatchObject({ name: "aiLLMInsights" });
+    expect(items[1].to).toMatchObject({ name: "aiSessions" });
   });
 });
 
@@ -120,12 +122,13 @@ describe("AIObservabilityShell — enterprise/cloud builds", () => {
     const wrapper = await mountShell();
     const groups = groupsOf(wrapper);
     expect(groups.map((g) => g.label)).toEqual([
+      "Assist",
       "aiObservability.sections.monitor",
       "aiObservability.sections.evaluate",
       "aiObservability.sections.experiment",
       "aiObservability.sections.annotate",
     ]);
-    const monitorKeys = groups[0].items.map((i) => i.key);
+    const monitorKeys = groups[1].items.map((i) => i.key);
     expect(monitorKeys).toEqual(["llmInsights", "sessions", "agentGraph", "agentBehavior"]);
   });
 
@@ -133,8 +136,8 @@ describe("AIObservabilityShell — enterprise/cloud builds", () => {
     mockIsCloud = "true";
     const wrapper = await mountShell();
     const groups = groupsOf(wrapper);
-    expect(groups).toHaveLength(4);
-    expect(groups[0].items.map((i) => i.key)).toEqual([
+    expect(groups).toHaveLength(5);
+    expect(groups[1].items.map((i) => i.key)).toEqual([
       "llmInsights",
       "sessions",
       "agentGraph",

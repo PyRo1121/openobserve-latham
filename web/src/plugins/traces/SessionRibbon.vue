@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </div>
       <OToggleGroup v-model="metric" class="flex-shrink-0">
-        <OToggleGroupItem value="cost" size="sm">
+        <OToggleGroupItem v-if="costAvailable" value="cost" size="sm">
           {{ t("traces.sessionDetail.kpi.cost") }}
         </OToggleGroupItem>
         <OToggleGroupItem value="latency" size="sm">
@@ -176,6 +176,7 @@ const props = defineProps<{
   traces: SessionTraceRow[];
   /** Session-level cache reuse percentage forwarded to hover cards. */
   cachePct: number;
+  costAvailable?: boolean;
 }>();
 
 // Emitted when a bar is clicked — the parent scrolls/expands that turn (S5).
@@ -184,7 +185,7 @@ const emit = defineEmits<{ (e: "jump", turn: number): void }>();
 const { t } = useI18nTyped();
 
 type Metric = "cost" | "latency" | "tokens";
-const metric = ref<Metric>("cost");
+const metric = ref<Metric>(props.costAvailable ? "cost" : "latency");
 
 // Bar colours match the LLM Insights dashboard chart palette (hex, as the panel
 // defs use). Error turns are always red regardless of the selected metric.

@@ -319,6 +319,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useStore } from "vuex";
 import { raw, useI18nTyped } from "@/types/i18n";
 import OTooltip from "@/lib/overlay/Tooltip/OTooltip.vue";
 
@@ -346,6 +347,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "span-selected", spanId: string): void;
 }>();
+const store = useStore();
 
 import {
   getModel,
@@ -496,6 +498,7 @@ function formatDuration(ns: number): string {
 }
 
 function formatCost(usd: number): string {
+  if (store.state.zoConfig?.model_pricing_enabled !== true) return "—";
   if (!usd || usd <= 0) return "$0";
   if (usd >= 1) return `$${usd.toFixed(2)}`;
   if (usd >= 0.01) return `$${usd.toFixed(3)}`;

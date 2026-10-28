@@ -1548,10 +1548,7 @@ export default defineComponent({
     };
 
     // ── Global shortcuts: AI Chat ─────────────────────────────────────────
-    // O2 AI is enterprise-only: on OSS the Ctrl+B binding must not exist at all.
-    if (config.isEnterprise == "true") {
-      useShortcuts([{ id: "aiChatToggle", handler: () => toggleAIChat() }]);
-    }
+    useShortcuts([{ id: "aiChatToggle", handler: () => toggleAIChat() }]);
 
     return {
       isDark,

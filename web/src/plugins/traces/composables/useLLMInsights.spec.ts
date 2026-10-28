@@ -15,7 +15,7 @@ const mockCancelStreamQuery = vi.fn();
 const mockFetchQueryDataWithHttpStream = vi.fn();
 const mockStoreState = {
   selectedOrganization: { identifier: "test-org" },
-  zoConfig: { sql_base64_enabled: false },
+  zoConfig: { sql_base64_enabled: false, model_pricing_enabled: true },
 };
 
 vi.mock("@/composables/useStreamingSearch", () => ({
@@ -49,6 +49,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   traceIdCounter = 0;
   mockStoreState.zoConfig.sql_base64_enabled = false;
+  mockStoreState.zoConfig.model_pricing_enabled = true;
 });
 
 /**
@@ -726,6 +727,27 @@ describe("useLLMInsights — cancelAll", () => {
 // ---------------------------------------------------------------------------
 
 describe("useLLMInsights — SQL surface", () => {
+  it("does not query an absent cost field when verified pricing is disabled, while retaining token usage", async () => {
+    mockStoreState.zoConfig.model_pricing_enabled = false;
+    const { fetchAll, kpi, error } = useLLMInsights();
+    const pending = fetchAll("workers_ai", 100, 200);
+    const summary = mockFetchQueryDataWithHttpStream.mock.calls.find(([query]: any) => query.queryReq.query.sql.includes("GROUP BY ts"));
+    expect(summary).toBeTruthy();
+    expect(summary?.[0].queryReq.query.sql).not.toContain("gen_ai_usage_cost");
+    expect(summary?.[0].queryReq.query.sql).toContain("NULL as total_cost");
+    expect(summary?.[0].queryReq.query.sql).toContain("gen_ai_usage_total_tokens");
+    for (const [query, callbacks] of mockFetchQueryDataWithHttpStream.mock.calls) {
+      callbacks.data(null, { content: { results: { hits: [query.queryReq.query.sql.includes("GROUP BY ts")
+        ? { ts: "1970-01-01T00:00:00", request_count: 2, trace_count: 2, error_count: 0, total_tokens: 321, total_cost: null, p95_duration: 1000 }
+        : { p95_duration: 1000 }] } } });
+      callbacks.complete();
+    }
+    await pending;
+    expect(error.value).toBeNull();
+    expect(kpi.value.totalTokens).toBe(321);
+    expect(kpi.value.requestCount).toBe(2);
+  });
+
   // Pin the column names the queries reference. A future schema rename
   // (e.g. dropping `gen_ai_*`) needs to update these together with the
   // backend, and the test failure here will point that out immediately.

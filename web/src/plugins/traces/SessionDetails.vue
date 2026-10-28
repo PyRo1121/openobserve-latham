@@ -325,7 +325,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
 
             <!-- Session ribbon — one bar per turn, Cost/Latency/Tokens toggle -->
-            <SessionRibbon :traces="traces" :cache-pct="cacheRatio" @jump="jumpToTurn" />
+            <p v-if="!pricingAvailable" class="text-text-secondary text-xs">
+              {{ t("aiAssistant.costUnavailable") }}
+            </p>
+            <SessionRibbon :traces="traces" :cache-pct="cacheRatio" :cost-available="pricingAvailable" @jump="jumpToTurn" />
           </div>
 
           <!-- Lower area: conversation column (left) + hotspot rail (right). Full-page
@@ -488,10 +491,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                           <span
                             class="text-text-secondary text-right text-xs font-semibold tabular-nums"
                           >
-                            {{ t("traces.sessionDetail.currencySymbol")
-                            }}{{ trace.cost.toFixed(4) }}
+                            {{ usd4(trace.cost) }}
                           </span>
-                          <OProgressBar :value="ratio(trace.cost, maxTurnCost)" size="xs" />
+                          <OProgressBar v-if="pricingAvailable" :value="ratio(trace.cost, maxTurnCost)" size="xs" />
                         </div>
                         <div class="flex min-w-0 flex-col gap-[0.2rem]">
                           <span
@@ -619,8 +621,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             <span>{{ formatTime(trace.startTimeMicros) }}</span>
                             <span>· {{ formatDuration(trace.durationNanos) }}</span>
                             <span
-                              >· {{ t("traces.sessionDetail.currencySymbol")
-                              }}{{ trace.cost.toFixed(4) }}</span
+                              >· {{ usd4(trace.cost) }}</span
                             >
                             <span
                               >· {{ formatTokens(trace.inputTokens) }}
@@ -788,6 +789,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
               <!-- Cost Hotspots -->
               <div
+                v-if="pricingAvailable"
                 class="bg-card-glass-bg rounded-default border-border-default flex flex-col overflow-hidden border"
               >
                 <div
@@ -953,6 +955,7 @@ const { t } = useI18nTyped();
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const pricingAvailable = computed(() => store.state.zoConfig?.model_pricing_enabled === true);
 
 const { fetchSession, fetchSessionSpans } = useSessions();
 const detail = ref<SessionDetail | null>(null);
@@ -1673,10 +1676,12 @@ function copyText(text: string | null | undefined) {
 }
 
 function usd4(v: number): string {
+  if (!pricingAvailable.value) return "—";
   return `$${v.toFixed(4)}`;
 }
 
 function signedUsd4(v: number): string {
+  if (!pricingAvailable.value) return "—";
   return v < 0 ? `-$${Math.abs(v).toFixed(4)}` : usd4(v);
 }
 

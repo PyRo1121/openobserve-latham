@@ -22,6 +22,7 @@
 
 /** No entry here may be a prefix of another, or the earlier one always wins. */
 const SECTION_BY_ROUTE_PREFIX: ReadonlyArray<readonly [string, string]> = [
+  ["aiAssistant", "assistant"],
   ["aiLLMInsights", "llmInsights"],
   ["aiSession", "sessions"],
   ["aiAgentGraph", "agentGraph"],

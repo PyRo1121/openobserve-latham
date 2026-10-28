@@ -8,6 +8,7 @@ import { navSection } from "./navSection";
 // detail page reads as having left the section.
 describe("navSection", () => {
   it.each([
+    ["aiAssistant", "assistant"],
     ["aiLLMInsights", "llmInsights"],
     ["aiSessions", "sessions"],
     ["aiSessionDetails", "sessions"],

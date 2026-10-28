@@ -91,6 +91,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </template>
     </AiScopeBar>
 
+    <p v-if="!pricingAvailable" class="text-text-secondary px-3 py-2 text-xs">
+      {{ t("aiAssistant.costUnavailable") }}
+    </p>
+
     <!-- Streams exist: OTable owns the data surface (column chooser, server-side
          pagination footer, column resize, empty/error body). The scope control
          lives in the page-level bar above; the header owns refresh + date.
@@ -303,6 +307,7 @@ const { t } = useI18nTyped();
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const pricingAvailable = computed(() => store.state.zoConfig?.model_pricing_enabled === true);
 const {
   sessions,
   total,
@@ -602,7 +607,7 @@ const tableColumns = computed(() =>
       sortable: false,
       meta: { align: "left" },
     },
-  ].map((c: any) => ({
+  ].filter(column => pricingAvailable.value || column.id !== "cost").map((c: any) => ({
     ...c,
     // Offer every column except the session id (row identity) in OTable's
     // "Manage columns" chooser.

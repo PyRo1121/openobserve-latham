@@ -94,6 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script lang="ts" setup>
 import { computed } from "vue";
+import { useStore } from "vuex";
 import { useI18nTyped } from "@/types/i18n";
 import { formatDate } from "@/utils/date";
 import OTooltip from "@/lib/overlay/Tooltip/OTooltip.vue";
@@ -120,6 +121,7 @@ const props = withDefaults(
 );
 
 const { t } = useI18nTyped();
+const store = useStore();
 
 // start_time is nanoseconds; ms = nanos / 1_000_000 (matches SessionsList).
 const timeLabel = computed(() =>
@@ -132,7 +134,7 @@ const userText = computed(
   () => props.turn.turnUserMessage || t("traces.sessionDetail.noUserMessage"),
 );
 
-const costLabel = computed(() => `$${props.turn.cost.toFixed(4)}`);
+const costLabel = computed(() => store.state.zoConfig?.model_pricing_enabled === true ? `$${props.turn.cost.toFixed(4)}` : "—");
 
 const latencyLabel = computed(() => {
   if (!props.turn.durationNanos) return "—";

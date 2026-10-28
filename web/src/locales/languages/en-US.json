@@ -6915,8 +6915,8 @@
       "wave": "👋",
       "taglineDash": "—",
       "taglineLead": "I'm",
-      "taglineHighlight": "O2 Assistant",
-      "taglineTail": ". I can write your",
+      "taglineHighlight": "Latham Assistant",
+      "taglineTail": ". I read your connected Cloudflare and Sentry data to explain traffic, infrastructure and errors. I do not change your projects.",
       "taglineSql": "SQL",
       "taglineVrl": "VRL",
       "taglineAnd": "and walk you through your logs, traces, metrics and incidents.",
@@ -6926,38 +6926,38 @@
     },
     "capabilities": {
       "query": {
-        "title": "Write a Query",
-        "description": "SQL for logs, traces, RUM, or PromQL for metrics.",
-        "prompt": "Help me write a query"
+        "title": "Understand Traffic",
+        "description": "Compare HTTP, Worker and browser activity with source coverage.",
+        "prompt": "Summarize current Cloudflare traffic and Worker errors. Read coverage first and explain missing data."
       },
       "incident": {
         "title": "Investigate Incidents",
-        "description": "Root-cause across logs, traces, alerts — e.g. \"Why did gateway-5xx fire?\"",
-        "prompt": "Help me investigate an incident"
+        "description": "Inspect connected Sentry issues and explain evidence and limits.",
+        "prompt": "Inspect recent issues in the configured Sentry projects and explain the most useful next investigation steps."
       },
       "dashboard": {
-        "title": "Build a Dashboard",
-        "description": "From a topic — e.g. \"K8s node health: CPU, memory, restarts\". Also creates panels.",
-        "prompt": "Help me build a dashboard or panel"
+        "title": "Review Infrastructure",
+        "description": "Read D1, R2, KV, Queues, Durable Objects and Containers usage.",
+        "prompt": "Review connected Cloudflare infrastructure usage and storage. Distinguish daily usage from point-in-time storage gauges."
       },
       "alert": {
-        "title": "Create an Alert",
-        "description": "Threshold or scheduled alerts, and ingest-time VRL pipelines.",
-        "prompt": "Help me create an alert or pipeline"
+        "title": "Check Coverage",
+        "description": "Find unavailable sources, stale collection and permission gaps.",
+        "prompt": "Check source coverage and freshness. Which observations are missing, stale or forbidden?"
       }
     },
     "suggestions": {
-      "vrlParseJson": "Write VRL to parse JSON from my nginx logs",
-      "regexRedact": "Generate a regex pattern to redact emails",
-      "mapStreamSchema": "Map my \"default\" stream schema",
-      "promqlCpu": "Write PromQL for pods using > 80% CPU",
-      "datadogToO2": "Convert this Datadog query to OpenObserve SQL",
-      "lastAlertFired": "Why was my last alert fired?"
+      "vrlParseJson": "How are my OMG Workers performing?",
+      "regexRedact": "Which Sentry projects have recent issues?",
+      "mapStreamSchema": "Is every source collecting fresh data?",
+      "promqlCpu": "Review D1 usage and storage",
+      "datadogToO2": "Compare Codeloud traffic and errors",
+      "lastAlertFired": "Explain browser analytics coverage and limits"
     },
     "placeholderRotation": {
-      "one": "Show me errors from the last hour…",
-      "two": "Write VRL to parse JSON from nginx logs…",
-      "three": "Build a dashboard for K8s node health…"
+      "one": "Explain current traffic and Worker errors…",
+      "two": "Check data coverage and freshness…",
+      "three": "Review infrastructure usage and storage…"
     },
     "autoNavigation": {
       "label": "Auto Navigation",
@@ -6965,6 +6965,9 @@
       "disabledTooltip": "Auto navigation disabled - O2 Assistant will ask before navigating"
     },
     "attachImageTooltip": "Attach images (PNG, JPEG, max 2MB)",
+    "deploymentAttribution": "DeepSeek · Cloudflare Workers AI · read-only",
+    "deploymentSource": "Source",
+    "costUnavailable": "Cost unknown: verified model prices, credits and invoice charges are not connected. Token counts are usage, not a bill.",
     "greeting": {
       "morning": "Good Morning",
       "afternoon": "Good Afternoon",

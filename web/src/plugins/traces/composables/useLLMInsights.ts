@@ -247,7 +247,7 @@ export function useLLMInsights() {
         approx_distinct(trace_id) as trace_count,
         approx_distinct(trace_id) FILTER (WHERE span_status = 'ERROR') as error_count,
         COALESCE(SUM(gen_ai_usage_total_tokens), 0) as total_tokens,
-        COALESCE(SUM(gen_ai_usage_cost), 0) as total_cost,
+        ${store.state.zoConfig?.model_pricing_enabled === true ? "COALESCE(SUM(gen_ai_usage_cost), 0)" : "NULL"} as total_cost,
         COALESCE(approx_percentile_cont(duration, 0.95) FILTER (WHERE gen_ai_operation_name IS NOT NULL), 0) as p95_duration
       FROM "${streamName}"
       ${agentFilter ? `WHERE ${agentFilter}` : ""}

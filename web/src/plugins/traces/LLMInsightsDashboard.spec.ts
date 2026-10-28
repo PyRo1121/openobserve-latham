@@ -39,7 +39,7 @@ const mockRouterPush = vi.fn();
 
 import { reactive, ref } from "vue";
 
-const mockStoreState = reactive({ selectedOrganization: { identifier: "test-org" } });
+const mockStoreState = reactive({ selectedOrganization: { identifier: "test-org" }, zoConfig: { model_pricing_enabled: true } });
 
 // Reactive refs the composable mock returns — tests can read these
 // after asserting on fetch behaviour.
@@ -152,6 +152,7 @@ function mountDashboard(
 }
 
 beforeEach(() => {
+  mockStoreState.zoConfig.model_pricing_enabled = true;
   // Fresh mock state for every test.
   vi.clearAllMocks();
   kpiCache.clear();
@@ -469,6 +470,23 @@ describe("LLMInsightsDashboard — onMounted", () => {
 // ===========================================================================
 // onUnmounted — cancellation on tab/page navigation away
 // ===========================================================================
+
+describe("LLMInsightsDashboard — unavailable pricing", () => {
+  it("shows unknown cost and excludes cost charts while preserving token usage", async () => {
+    mockStoreState.zoConfig.model_pricing_enabled = false;
+    mockHasLoadedOnce.value = true;
+    mockKpi.value.totalTokens = 321;
+    mockKpi.value.traceCount = 2;
+    const wrapper = mountDashboard();
+    await flushPromises();
+    const cards = wrapper.vm.$.setupState.kpiCards;
+    expect(cards.find((card: { icon: string }) => card.icon === "payments").value).toBe("—");
+    expect(cards.find((card: { icon: string }) => card.icon === "tag").value).toBe("321");
+    expect(wrapper.vm.$.setupState.visiblePanels.some((panel: { id: string }) => panel.id === "cost-trend")).toBe(false);
+    expect(wrapper.text()).toContain("aiAssistant.costUnavailable");
+    wrapper.unmount();
+  });
+});
 
 describe("LLMInsightsDashboard — onUnmounted", () => {
   // The dashboard wires cancellation through onUnmounted so in-flight server

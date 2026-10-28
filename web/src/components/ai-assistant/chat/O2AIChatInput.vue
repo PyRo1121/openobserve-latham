@@ -90,45 +90,14 @@ const forwardChatInput = (instance: Element | ComponentPublicInstance | null) =>
     <!-- Bottom bar with buttons -->
     <div class="input-bottom-bar flex items-center justify-between pt-2">
       <div class="flex items-center gap-2">
-        <!-- Image upload button -->
-        <OButton
-          v-if="!isLoading"
-          @click.stop="emit('trigger-image-upload')"
-          variant="ghost"
-          size="icon-sm"
-          class="image-upload-btn opacity-70 transition-opacity duration-200 hover:opacity-100"
-        >
-          <OIcon name="image" size="sm" class="text-icon-color" />
-          <OTooltip :content="t('aiAssistant.attachImageTooltip')" />
-        </OButton>
-        <div v-else class="w-8"></div>
-
-        <!-- Auto navigation toggle button -->
-        <OButton
-          v-if="!isLoading"
-          @click.stop="emit('update:autoNavigation', !autoNavigation)"
-          variant="ghost"
-          size="sm"
-          class="auto-nav-toggle-btn rounded-default hover:bg-surface-subtle flex items-center gap-1.5 px-2 py-1 transition-all duration-200"
-        >
-          <OIcon
-            :name="autoNavigation ? 'check-circle' : 'radio-button-unchecked'"
-            size="sm"
-            :class="['auto-nav-icon', autoNavigation ? 'text-theme-accent!' : 'text-icon-color']"
-          />
-          <span
-            class="auto-nav-label ms-1 text-xs font-medium"
-            :class="autoNavigation ? 'text-theme-accent' : 'text-text-secondary'"
-            >{{ t("aiAssistant.autoNavigation.label") }}</span
-          >
-          <OTooltip
-            :content="
-              autoNavigation
-                ? t('aiAssistant.autoNavigation.enabledTooltip')
-                : t('aiAssistant.autoNavigation.disabledTooltip')
-            "
-          />
-        </OButton>
+        <p class="text-text-secondary flex flex-wrap items-center gap-x-2 text-xs">
+          <a href="https://developers.cloudflare.com/workers-ai/" target="_blank" rel="noopener noreferrer" class="hover:text-theme-accent">
+            {{ t("aiAssistant.deploymentAttribution") }}
+          </a>
+          <a href="https://github.com/PyRo1121/openobserve-latham/tree/latham-workers-ai" target="_blank" rel="noopener noreferrer" class="hover:text-theme-accent underline">
+            {{ t("aiAssistant.deploymentSource") }}
+          </a>
+        </p>
       </div>
 
       <div class="flex items-center gap-2">

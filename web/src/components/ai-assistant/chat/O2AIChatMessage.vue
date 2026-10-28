@@ -285,35 +285,6 @@ const isLogEntryExpanded = (blockIndex: number) =>
             ></div>
           </template>
         </template>
-        <!-- Feedback buttons for assistant messages -->
-        <div
-          v-if="message.role === 'assistant' && message.content && message.content.trim() !== ''"
-          class="feedback-buttons mt-1 flex items-center gap-0.5 *:transition-opacity *:duration-200 [&>*:hover]:opacity-100"
-          :class="message.feedback ? '*:opacity-100' : '*:opacity-50'"
-        >
-          <OButton
-            variant="ghost"
-            size="icon-xs-circle"
-            :disabled="message.feedback === 'thumbs_up'"
-            :class="message.feedback === 'thumbs_up' ? 'text-accent opacity-100!' : ''"
-            data-test="o2-ai-chat-thumbs-up-btn"
-            @click="emit('like')"
-          >
-            <OIcon name="thumb-up-off-alt" size="xs" />
-            <OTooltip :content="t('aiAssistant.helpful')" />
-          </OButton>
-          <OButton
-            variant="ghost"
-            size="icon-xs-circle"
-            :disabled="message.feedback === 'thumbs_down'"
-            :class="message.feedback === 'thumbs_down' ? 'text-accent opacity-100!' : ''"
-            data-test="o2-ai-chat-thumbs-down-btn"
-            @click="emit('dislike')"
-          >
-            <OIcon name="thumb-down-off-alt" size="xs" />
-            <OTooltip :content="t('aiAssistant.notHelpful')" />
-          </OButton>
-        </div>
       </div>
     </div>
   </div>

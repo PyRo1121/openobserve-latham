@@ -48,7 +48,14 @@ const useOSRoutes = () => {
         {
           path: "",
           name: "aiObservability",
-          redirect: { name: "aiLLMInsights" },
+          redirect: { name: "aiAssistant" },
+        },
+        {
+          path: "assistant",
+          name: "aiAssistant",
+          component: () => import("@/components/O2AIChat.vue"),
+          props: { isOpen: true, centeredStart: true, headerHeight: 0 },
+          meta: { keepAlive: false },
         },
         {
           path: "llm-insights",

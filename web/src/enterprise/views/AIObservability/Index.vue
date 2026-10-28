@@ -103,13 +103,21 @@ const activeSection = computed<string>(() => navSection(route.name, route.query.
 // Only Monitor's LLM Insights + Sessions have OSS-registered routes (see
 // web/src/composables/router.ts). The remaining sections require the
 // enterprise/cloud backend, so true OSS builds must not link to them.
-const OSS_AVAILABLE_KEYS = new Set(["llmInsights", "sessions"]);
+const OSS_AVAILABLE_KEYS = new Set(["assistant", "llmInsights", "sessions"]);
 const isEnterpriseOrCloud = config.isEnterprise == "true" || config.isCloud == "true";
 
 // Single source of truth for the rail items (groups) AND the breadcrumb
 // switcher. Order here is the order shown in the rail.
 const sectionItems = computed<(SectionHubItem & { group: string })[]>(() =>
   [
+    {
+      key: "assistant",
+      label: raw("DeepSeek assistant"),
+      icon: "forum",
+      to: { name: "aiAssistant", query: orgQuery.value },
+      dataTest: "ai-secondary-nav-assistant",
+      group: "Assist",
+    },
     {
       key: "llmInsights",
       label: t("aiObservability.nav.llmInsights"),
@@ -240,7 +248,7 @@ const activeSectionItem = computed(() =>
 // Group order: Monitor, then Evaluate, then Experiment, then Annotate at the
 // bottom. Experiment is its own section (not an Evaluate sub-item) because an
 // experiment is a run you author, not a scoring config you maintain.
-const sectionGroupOrder = ["Monitor", "Evaluate", "Experiment", "Annotate"];
+const sectionGroupOrder = ["Assist", "Monitor", "Evaluate", "Experiment", "Annotate"];
 
 const groupLabels = computed<Record<string, I18nText>>(() => ({
   Monitor: t("aiObservability.sections.monitor"),

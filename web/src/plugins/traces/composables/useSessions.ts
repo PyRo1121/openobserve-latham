@@ -567,7 +567,7 @@ export function useSessions() {
         duration, start_time, end_time,
         span_status, status_message,
         gen_ai_request_model, gen_ai_response_model,
-        gen_ai_usage_cost, gen_ai_usage_total_tokens,
+        ${store.state.zoConfig?.model_pricing_enabled === true ? "gen_ai_usage_cost" : "NULL AS gen_ai_usage_cost"}, gen_ai_usage_total_tokens,
         gen_ai_input_messages, gen_ai_output_messages
       FROM "${streamName}"
       WHERE trace_id IN (${inList})

@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed } from "vue";
 import { useStore } from "vuex";
-import { raw, useI18nTyped } from "@/types/i18n";
+import { useI18nTyped } from "@/types/i18n";
 import { useGreeting } from "./useGreeting";
 import { getImageURL } from "@/utils/zincutils";
 import { useTheme } from "@/composables/useTheme";
@@ -61,20 +61,6 @@ const logoSrc = computed(() =>
         class="welcome-hero__highlight bg-gradient-brand-ribbon [background-clip:text] font-semibold text-transparent [-webkit-background-clip:text]"
         >{{ t("aiAssistant.welcome.taglineHighlight") }}</span
       >{{ t("aiAssistant.welcome.taglineTail") }}
-      <span
-        class="welcome-hero__code welcome-hero__code--sql rounded-default text-lang-sql-text bg-lang-sql-bg px-1.5 py-px font-mono text-xs font-semibold tracking-[0.01em]"
-        >{{ t("aiAssistant.welcome.taglineSql") }}</span
-      >,
-      <span
-        class="welcome-hero__code welcome-hero__code--vrl rounded-default text-lang-vrl-text bg-lang-vrl-bg px-1.5 py-px font-mono text-xs font-semibold tracking-[0.01em]"
-        >{{ t("aiAssistant.welcome.taglineVrl") }}</span
-      >
-      {{ t("common.and") }}
-      <span
-        class="welcome-hero__code welcome-hero__code--promql rounded-default text-lang-promql-text bg-lang-promql-bg px-1.5 py-px font-mono text-xs font-semibold tracking-[0.01em]"
-        >{{ raw("PromQL") }}</span
-      >
-      {{ t("aiAssistant.welcome.taglineDash") }} {{ t("aiAssistant.welcome.taglineAnd") }}
     </div>
 
     <div

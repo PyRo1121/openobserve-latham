@@ -292,16 +292,6 @@
         />
         <O2AIPaidUsageConsent v-if="showPaidUsageConsent" />
 
-        <!-- Hidden file input for image upload -->
-        <input
-          ref="imageInputRef"
-          type="file"
-          accept="image/png,image/jpeg"
-          multiple
-          class="hidden"
-          @change="handleImageSelect"
-        />
-
         <O2AIChatInput
           v-if="!pendingConfirmation && !showPaidUsageConsent"
           v-model="inputMessage"
@@ -311,15 +301,11 @@
           :is-loading="isLoading"
           :theme="store.state.theme"
           :references="contextReferences"
-          @dragover="handleDragOver"
-          @drop="handleDrop"
-          @paste="handlePaste"
           @input-ref="(instance: any) => (chatInput = instance)"
           @keydown="handleKeyDown"
           @update:references="handleReferencesUpdate"
           @send="sendMessage"
           @cancel="cancelCurrentRequest"
-          @trigger-image-upload="triggerImageUpload"
           @remove-image="removeImage"
         />
       </div>

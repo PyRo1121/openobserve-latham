@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        another bg-card-glass-bg would render same-bg-on-same-bg and the
        inner cards would visually disappear (no border contrast). -->
   <div class="flex h-full flex-col bg-transparent">
+    <p v-if="!pricingAvailable" class="text-text-secondary px-3 py-2 text-xs">
+      {{ t("aiAssistant.costUnavailable") }}
+    </p>
     <!-- Toolbar: Stream/Agent mode tab (left) + the matching picker (right) —
          hidden when no streams are available. Padding lives on the toolbar +
          scroll area (not the root) so the scrollbar hugs the content-area edge
@@ -245,7 +248,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            a clean miss that fetches. -->
         <div class="grid grid-cols-2 gap-2.5">
           <div
-            v-for="panel in LLM_INSIGHTS_PANELS"
+            v-for="panel in visiblePanels"
             :key="`${panel.id}::${panelCacheDashboardId}`"
             :class="panel.layout.colSpan === 2 ? 'col-span-2' : ''"
           >
@@ -324,6 +327,8 @@ const { getStreams } = useStreams(t);
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const pricingAvailable = computed(() => store.state.zoConfig?.model_pricing_enabled === true);
+const visiblePanels = computed(() => LLM_INSIGHTS_PANELS.filter(panel => pricingAvailable.value || panel.id !== "cost-trend"));
 
 // Initial filter selection precedence: URL query (deep link / shareable) >
 // localStorage (last used) > default. Read once at setup; we write the URL
@@ -846,14 +851,11 @@ const kpiCards = computed<KpiCard[]>(() => {
   const errorRate =
     kpi.value.traceCount > 0 ? (kpi.value.errorCount / kpi.value.traceCount) * 100 : 0;
 
-  // Cost comes straight from SUM(gen_ai_usage_cost) on the KPI summary.
-  // If it's 0, either there are no LLM spans in the window or the SDK
-  // isn't emitting cost; either way we render "$0".
   const costCard: KpiCard = {
     label: t("traces.lLMInsightsDashboard.totalCost"),
     icon: "payments",
-    ...splitCost(kpi.value.totalCost),
-    sparkData: sparklines.value.cost,
+    ...(pricingAvailable.value ? splitCost(kpi.value.totalCost) : { value: "—" }),
+    sparkData: pricingAvailable.value ? sparklines.value.cost : undefined,
     sparkColor: "#0ea5e9",
   };
 

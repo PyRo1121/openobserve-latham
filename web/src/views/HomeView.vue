@@ -189,7 +189,7 @@ export default defineComponent({
 
     const DEFAULT_TABS = computed(() => {
       const tabs: { id: string; label: string; closable?: boolean }[] = [];
-      if (isEnterpriseOrCloud && store.state.zoConfig.ai_enabled) {
+      if (store.state.zoConfig.ai_enabled) {
         tabs.push({ id: "ai", label: t("home.tabAiAssistant") });
       }
       if (isEnterpriseOrCloud) {

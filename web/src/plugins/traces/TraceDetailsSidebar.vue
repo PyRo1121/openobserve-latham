@@ -333,6 +333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           <!-- Cost Chip -->
           <OTag
+            v-if="store.state.zoConfig?.model_pricing_enabled === true"
             type="metricChip"
             icon="attach-money"
             class="text-3xs bg-surface-base border-border-default border-s-badge-orange-ol-border h-5 shrink-0 border border-s-[0.1875rem] border-solid px-1.5 transition-all duration-200 hover:-translate-y-px"
