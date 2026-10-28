@@ -32,12 +32,17 @@ describe("query_history service", () => {
     (http as any).mockReturnValue(api);
   });
 
-  it("records an entry", async () => {
-    await queryHistory.record("o1", { query: "up", context: { chart_type: "line" } });
-    expect(api.post).toHaveBeenCalledWith("/api/o1/query_history", {
-      query: "up",
-      context: { chart_type: "line" },
-    });
+  it("records a run with its source, key, streams and status", async () => {
+    const body = {
+      source: "logs" as const,
+      query: "level = 'error'",
+      query_key: "k8s|filter|level = 'error'||2026-10-27",
+      streams: ["k8s"],
+      status: "ok" as const,
+      context: { time: { type: "relative" as const, period: "15m", start_time: 1, end_time: 2 } },
+    };
+    await queryHistory.record("o1", body);
+    expect(api.post).toHaveBeenCalledWith("/api/o1/query_history", body);
   });
 
   it("lists with only the filters that are set", async () => {
@@ -45,8 +50,23 @@ describe("query_history service", () => {
     expect(api.get).toHaveBeenCalledWith("/api/o1/query_history", {
       params: { starred: true, q: "rate" },
     });
-    await queryHistory.list("o1", {});
-    expect(api.get).toHaveBeenLastCalledWith("/api/o1/query_history", { params: {} });
+    await queryHistory.list("o1", {
+      source: "logs,traces",
+      status: "error",
+      stream: "k8s",
+      ran_from: 1,
+      ran_to: 2,
+    });
+    expect(api.get).toHaveBeenLastCalledWith("/api/o1/query_history", {
+      params: { source: "logs,traces", status: "error", stream: "k8s", ran_from: 1, ran_to: 2 },
+    });
+  });
+
+  it("clears the caller's history for a scope", async () => {
+    await queryHistory.clear("o1", { source: "logs", include_starred: false });
+    expect(api.delete).toHaveBeenCalledWith("/api/o1/query_history", {
+      params: { source: "logs", include_starred: false },
+    });
   });
 
   it("stars and deletes by id", async () => {

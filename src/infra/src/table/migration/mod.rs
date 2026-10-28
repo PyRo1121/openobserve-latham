@@ -236,6 +236,7 @@ mod m20261021_000001_status_pages_add_favicon_img;
 mod m20261021_000002_add_search_type_to_search_queue;
 mod m20261024_000001_add_lease_to_org_cleanup_tasks;
 mod m20261026_000001_backfill_v1_rca_pointer;
+mod m20261027_000001_alter_query_history;
 /// Shared body of the two `folder_id` migrations above; not a migration itself.
 mod workflow_folder_id;
 
@@ -437,6 +438,20 @@ pub(crate) async fn create_slack_tables<C: sea_orm::ConnectionTrait>(db: &C) -> 
 pub(crate) async fn backfill_v1_rca_pointer(db: &sea_orm::DatabaseConnection) -> Result<(), DbErr> {
     m20261026_000001_backfill_v1_rca_pointer::Migration
         .up(&SchemaManager::new(db))
+        .await
+}
+
+/// Apply the query_history table and its columns, idempotently, for tests in any crate.
+#[cfg(any(test, feature = "test-utils"))]
+pub(crate) async fn create_query_history_table(
+    db: &sea_orm::DatabaseConnection,
+) -> Result<(), DbErr> {
+    let manager = SchemaManager::new(db);
+    m20261004_000001_create_query_history::Migration
+        .up(&manager)
+        .await?;
+    m20261027_000001_alter_query_history::Migration
+        .up(&manager)
         .await
 }
 
@@ -664,6 +679,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20261021_000001_create_public_dashboards::Migration),
             Box::new(m20261021_000002_add_search_type_to_search_queue::Migration),
             Box::new(m20261026_000001_backfill_v1_rca_pointer::Migration),
+            Box::new(m20261027_000001_alter_query_history::Migration),
         ]
     }
 }
@@ -744,6 +760,7 @@ mod tests {
         (119, "m20261021_000001_create_public_dashboards"),
         (120, "m20261021_000002_add_search_type_to_search_queue"),
         (121, "m20261026_000001_backfill_v1_rca_pointer"),
+        (122, "m20261027_000001_alter_query_history"),
     ];
 
     // Two branches that each claim the next version merge cleanly, so a reused number must fail

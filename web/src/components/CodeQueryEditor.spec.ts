@@ -777,6 +777,25 @@ describe("CodeQueryEditor", () => {
         expect(wrapper.emitted("update:query")).toBeFalsy();
       });
 
+      it("passes the text and the text before it, counting a programmatic restore", async () => {
+        const wrapper = await mountAndSetup();
+        mockEditorObj.setValue.mockImplementation(() => changeHandler()({ isFlush: false }));
+        mockEditorObj.getValue.mockReturnValue("level='error'");
+        const editorApi = wrapper.vm as unknown as { setValue: (value: string) => void };
+        editorApi.setValue("level='error'");
+        expect(wrapper.emitted("user-edit")).toBeFalsy();
+
+        mockEditorObj.getValue.mockReturnValue("");
+        changeHandler()({ isFlush: false });
+        mockEditorObj.getValue.mockReturnValue("u");
+        changeHandler()({ isFlush: false });
+        expect(wrapper.emitted("user-edit")).toEqual([
+          ["", "level='error'"],
+          ["u", ""],
+        ]);
+        mockEditorObj.getValue.mockReturnValue("");
+      });
+
       it("ignores a flush (a whole-model replace)", async () => {
         const wrapper = await mountAndSetup();
         changeHandler()({ isFlush: true });

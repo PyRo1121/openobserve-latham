@@ -76,6 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @cancel-query="cancelSearch"
               @update:searchMode="onSearchModeChange"
               @apply-saved-view="onApplySavedView"
+              @recent-restore="onRecentRestore"
               @service-graph-refresh="serviceGraphRef?.refresh()"
               @services-catalog-refresh="servicesCatalogRef?.loadServicesCatalog()"
               @drill-down="searchResultRef?.openComparison()"
@@ -142,7 +143,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </div>
                 </template>
                 <template #after>
-                  <div class="h-full pb-2.5">
+                  <div ref="recentSearchesColumnRef" class="h-full pb-2.5">
                     <!-- No trace streams in org yet -->
                     <FirstDataPanel
                       v-if="
@@ -359,6 +360,18 @@ import { toast } from "@/lib/feedback/Toast/useToast";
 import { useShortcuts } from "@/lib/vue-shortcut-manager";
 import { recordPageLoad, recordPageRequest, type PageLoadReason } from "@/utils/pageCrossing";
 import { isInputFocused } from "@/utils/keyboardShortcuts";
+import {
+  provideRecentSearchesColumn,
+  useRecentSearches,
+} from "@/composables/queryHistory/useRecentSearches";
+import {
+  runResultFromError,
+  toRunError,
+  type RestoreTime,
+} from "@/utils/queryHistory/recentSearches";
+import { buildTracesRecord, tracesRestore } from "@/utils/queryHistory/traces";
+import { recentSearchRoute } from "@/utils/queryHistory/routes";
+import type { HistoryTime, QueryHistoryEntry } from "@/services/query_history";
 
 interface TracesSavedView {
   version?: number;
@@ -381,6 +394,8 @@ const supportedTraceSearchMode = (value: unknown): TraceSearchMode =>
   resolveTraceSearchMode(value, config.isEnterprise === "true");
 
 const store = useStore();
+const { record: recordRecent } = useRecentSearches();
+const recentSearchesColumnRef = provideRecentSearchesColumn();
 const activeTab = computed(() => {
   if (searchObj.meta.searchMode === "service-graph") return "service-graph";
   if (searchObj.meta.searchMode === "services-catalog") return "services-catalog";
@@ -835,7 +850,11 @@ const dropStaleSelection = () => {
   if (dropped) searchResultRef.value?.metricsDashboardRef?.clearOriginalTimeRange();
 };
 
-async function getQueryData(isPagination: boolean = false, isSort: boolean = false) {
+async function getQueryData(
+  isPagination: boolean = false,
+  isSort: boolean = false,
+  recordRun: boolean = false,
+) {
   let boundTraceId: string | null = null;
   try {
     if (searchObj.data.stream.selectedStream.value == "") {
@@ -891,6 +910,7 @@ async function getQueryData(isPagination: boolean = false, isSort: boolean = fal
       dropStaleSelection();
     }
     const combinedFilter = submittedFilter;
+    const historyRun = recordRun && !isPagination ? tracesHistoryRun(queryReq) : null;
 
     if (!isPagination && !isSort) searchResultRef?.value?.getDashboardData();
 
@@ -1054,6 +1074,12 @@ async function getQueryData(isPagination: boolean = false, isSort: boolean = fal
 
           const errData = err?.content || err;
           const { message, trace_id, code, error_detail } = errData ?? {};
+          if (historyRun) {
+            const result = runResultFromError(
+              toRunError({ code, status: errData?.status, message }),
+            );
+            if (result) recordRecent(buildTracesRecord({ ...historyRun, result }));
+          }
 
           let errorMsg = message || err?.message || t("traces.index.errorProcessingRequest");
           if (code) {
@@ -1088,6 +1114,9 @@ async function getQueryData(isPagination: boolean = false, isSort: boolean = fal
           delete tracesRequestState[searchTraceId];
         },
         complete: (_payload: any) => {
+          if (historyRun && tracesRequestState[searchTraceId]) {
+            recordRecent(buildTracesRecord({ ...historyRun, result: { status: "ok" } }));
+          }
           searchObj.loading = false;
           currentSearchTraceId = null;
           // An exhausted page must not leave the previous page under the new page number.
@@ -1453,11 +1482,29 @@ onActivated(async () => {
   }
 });
 
+// Every caller is a user action (Run, live filter, comparison, stream change, URL landing); paging and sort are not.
 const runQueryFn = () => {
   searchObj.data.resultGrid.currentPage = 0;
   searchObj.runQuery = false;
-  getQueryData();
+  getQueryData(false, false, true);
 };
+
+/** What a run records once it settles, captured when it is dispatched. */
+function tracesHistoryRun(queryReq: { query: { start_time: number; end_time: number } }) {
+  const datetime = searchObj.data.datetime;
+  return {
+    stream: String(selectedStreamName.value ?? ""),
+    searchMode: String(searchObj.meta.searchMode),
+    query: String(searchObj.data.editorValue ?? ""),
+    time: {
+      type: datetime.type === "absolute" ? "absolute" : "relative",
+      ...(datetime.type === "absolute" ? {} : { period: String(datetime.relativeTimePeriod) }),
+      start_time: Number(queryReq.query.start_time),
+      end_time: Number(queryReq.query.end_time),
+    } as HistoryTime,
+    runAt: new Date(),
+  };
+}
 
 const runQueryOnSort = () => {
   searchObj.data.resultGrid.currentPage = 0;
@@ -1975,11 +2022,16 @@ const syncSavedViewDateTime = async (datetime: TracesSavedView["datetime"]) => {
 
 let savedViewApplySeq = 0;
 const onApplySavedView = async (view: TracesSavedView) => {
-  const seq = ++savedViewApplySeq;
   if (view.version !== undefined && view.version !== 1) {
     toast({ variant: "error", message: t("search.errorWhileApplyingSavedView") });
     return;
   }
+  await applyTracesView(view, true);
+};
+
+/** Applies a stream, filter, window and mode in place, then runs unless only loading. */
+const applyTracesView = async (view: TracesSavedView, run: boolean) => {
+  const seq = ++savedViewApplySeq;
   const streamName = view.stream?.value;
   const streamChanged = streamName !== searchObj.data.stream.selectedStream.value;
   if (
@@ -2023,7 +2075,36 @@ const onApplySavedView = async (view: TracesSavedView) => {
   if (view.editorValue && searchObj.data.stream.selectedStreamFields.length) {
     restoreFilters(view.editorValue);
   }
-  runQueryFn();
+  if (run) runQueryFn();
+};
+
+const onRecentRestore = (entry: QueryHistoryEntry, when: RestoreTime, run: boolean) => {
+  if (entry.source !== "traces") {
+    const route = recentSearchRoute(entry, when, store.state.selectedOrganization.identifier);
+    if (route) router.push(route);
+    return;
+  }
+  const restore = tracesRestore(entry, when);
+  const current = searchObj.data.datetime;
+  const window = restore.window;
+  void applyTracesView(
+    {
+      stream: { label: restore.stream, value: restore.stream },
+      editorValue: restore.query,
+      datetime: {
+        type: window?.type ?? current.type,
+        relativeTimePeriod:
+          window?.type === "relative" ? window.period : current.relativeTimePeriod,
+        startTime: window?.type === "absolute" ? window.startUs : current.startTime,
+        endTime: window?.type === "absolute" ? window.endUs : current.endTime,
+      },
+      searchMode: restore.searchMode === "spans" ? "spans" : "traces",
+      sortBy: searchObj.meta.resultGrid.sortBy,
+      sortOrder: searchObj.meta.resultGrid.sortOrder,
+      selectedFields: [...(searchObj.data.stream.selectedFields ?? [])],
+    },
+    run,
+  );
 };
 
 const streamChangeDialog = ref({ show: false, pendingStream: "" });

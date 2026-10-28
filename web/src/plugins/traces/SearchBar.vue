@@ -321,6 +321,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @on:date-change="updateDateTime"
             @on:timezone-change="updateTimezone"
           />
+          <RecentSearchesButton
+            source="traces"
+            :examples="recentExamples"
+            data-test="traces-search-bar-recent-searches-btn"
+            @run="(entry, when) => emit('recent-restore', entry, when, true)"
+            @load="(entry, when) => emit('recent-restore', entry, when, false)"
+            @view-all="openRecentSearches"
+            @example="applyRecentExample"
+          />
           <div>
             <div class="flex items-center">
               <OButton
@@ -509,7 +518,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       "
       class="border-border-default flex min-h-0 flex-1 border-b"
     >
-      <div class="relative flex h-full w-full flex-col overflow-hidden">
+      <div
+        ref="queryEditorBoxRef"
+        class="relative flex h-full w-full flex-col overflow-hidden"
+        @keydown.capture="onRecentEditorKeydown"
+      >
         <CodeQueryEditor
           ref="queryEditorRef"
           editor-id="traces-query-editor"
@@ -517,22 +530,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :keywords="effectiveKeywords"
           :suggestions="effectiveSuggestions"
           :field-value-resolver="resolveFieldValues"
+          :recent-queries="recentQueries"
           :debounce-time="100"
           :filter-mode="!searchObj.meta.sqlMode"
           language="sql"
           @update:query="updateQueryValue"
+          @user-edit="onRecentEditorEdit"
           @run-query="searchData"
           @focus="onQueryEditorFocus"
           @blur="onQueryEditorBlur"
         />
+        <RecentSearchesFocusDropdown
+          ref="recentFocusRef"
+          v-model:open="recentFocusOpen"
+          source="traces"
+          :anchor="queryEditorBoxRef"
+          :examples="recentExamples"
+          @run="(entry, when) => emit('recent-restore', entry, when, true)"
+          @load="(entry, when) => emit('recent-restore', entry, when, false)"
+          @view-all="openRecentSearches"
+          @example="applyRecentExample"
+          @dismiss="focusEditor"
+        />
         <div
-          v-if="searchObj.data.editorValue == '' && searchObj.meta.queryEditorPlaceholderFlag"
+          v-if="
+            searchObj.data.editorValue == '' &&
+            searchObj.meta.queryEditorPlaceholderFlag &&
+            !recentFocusOpen
+          "
           class="query-editor-placeholder-overlay pointer-events-none absolute top-0 right-0 bottom-0 left-0 z-1 flex items-start [padding:0.1875rem_0.5rem_0_2.15rem] select-none"
         >
           <span class="query-editor-placeholder-typewriter">{{ traceEditorPlaceholder }}</span>
         </div>
       </div>
     </div>
+    <RecentSearchesDrawer
+      ref="recentDrawerRef"
+      source="traces"
+      @restore="(entry, when, run) => emit('recent-restore', entry, when, run)"
+    />
     <ODialog
       v-model:open="saveViewDialogOpen"
       size="xs"
@@ -630,6 +666,20 @@ import { useMutation, useQuery } from "@tanstack/vue-query";
 import { useOrgId } from "@/composables/query/useOrgId";
 import { useConfirmDialog } from "@/composables/useConfirmDialog";
 import savedViewsService from "@/services/saved_views";
+import RecentSearchesButton from "@/components/queryHistory/RecentSearchesButton.vue";
+import RecentSearchesDrawer from "@/components/queryHistory/RecentSearchesDrawer.vue";
+import RecentSearchesFocusDropdown from "@/components/queryHistory/RecentSearchesFocusDropdown.vue";
+import {
+  useRecentSearches,
+  useRecentSearchesList,
+} from "@/composables/queryHistory/useRecentSearches";
+import {
+  recentQueryList,
+  recentsOpenAfterEdit,
+  routeEditorKeyToRecents,
+} from "@/utils/queryHistory/recentSearches";
+import { TRACES_EXAMPLE_QUERIES } from "@/utils/queryHistory/traces";
+import type { HistoryStatus } from "@/services/query_history";
 import {
   savedViewsQuery,
   createSavedViewMutation,
@@ -661,6 +711,9 @@ export default defineComponent({
     SyntaxGuide,
     TracesSavedViewsMenuItems,
     SavedViewsListDialog,
+    RecentSearchesButton,
+    RecentSearchesDrawer,
+    RecentSearchesFocusDropdown,
   },
   emits: [
     "searchdata",
@@ -673,6 +726,7 @@ export default defineComponent({
     "services-catalog-refresh",
     "apply-saved-view",
     "drill-down",
+    "recent-restore",
   ],
   props: {
     fieldValues: {
@@ -718,9 +772,54 @@ export default defineComponent({
       externalErrors: toRef(searchObj.data, "sqlSyntaxErrorRanges"),
     });
 
+    const queryEditorBoxRef = ref<HTMLElement | null>(null);
+    const recentFocusRef = ref<InstanceType<typeof RecentSearchesFocusDropdown> | null>(null);
+    const recentDrawerRef = ref<InstanceType<typeof RecentSearchesDrawer> | null>(null);
+    const recentFocusOpen = ref(false);
+    const recentListActive = ref(false);
+    const { enabled: recentSearchesEnabled } = useRecentSearches();
+    const recentList = useRecentSearchesList("traces", recentListActive);
+    const recentQueries = computed(() =>
+      recentSearchesEnabled.value ? recentQueryList(recentList.data.value ?? []) : [],
+    );
+    const recentExamples = computed(() =>
+      searchObj.data.stream.selectedStream?.value ? TRACES_EXAMPLE_QUERIES : [],
+    );
+
+    const onRecentEditorEdit = (text = "", previous = "") => {
+      recentFocusOpen.value = recentsOpenAfterEdit(
+        recentFocusOpen.value,
+        !previous.trim(),
+        recentSearchesEnabled.value && !text.trim(),
+      );
+    };
+
     const onQueryEditorFocus = () => {
       searchObj.meta.queryEditorPlaceholderFlag = false;
       _sqlOnFocus();
+      if (!recentSearchesEnabled.value) return;
+      recentListActive.value = true;
+      if (!String(searchObj.data.editorValue ?? "").trim()) recentFocusOpen.value = true;
+    };
+
+    const focusEditor = () => queryEditorRef.value?.focus?.();
+
+    // Capture phase: the editor's Escape binding stops the event, and that binding must still run.
+    const onRecentEditorKeydown = (e: KeyboardEvent) => {
+      if (!recentFocusOpen.value) return;
+      routeEditorKeyToRecents(e, recentFocusRef.value, () => (recentFocusOpen.value = false));
+    };
+
+    const openRecentSearches = (status: HistoryStatus | null = null) => {
+      if (!recentSearchesEnabled.value) return false;
+      recentDrawerRef.value?.show(status);
+      return true;
+    };
+
+    const applyRecentExample = (query: string) => {
+      searchObj.data.editorValue = query;
+      setEditorValue(query);
+      focusEditor();
     };
     const onQueryEditorBlur = async () => {
       searchObj.meta.queryEditorPlaceholderFlag = true;
@@ -1335,6 +1434,18 @@ export default defineComponent({
       queryEditorRef,
       onQueryEditorFocus,
       onQueryEditorBlur,
+      queryEditorBoxRef,
+      recentFocusRef,
+      recentDrawerRef,
+      recentFocusOpen,
+      recentQueries,
+      recentExamples,
+      onRecentEditorEdit,
+      onRecentEditorKeydown,
+      openRecentSearches,
+      applyRecentExample,
+      focusEditor,
+      emit,
       updateQueryValue,
       updateDateTime,
       downloadLogs,

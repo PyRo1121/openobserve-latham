@@ -119,7 +119,8 @@ pub type RwBTreeMap<K, V> = tokio::sync::RwLock<BTreeMap<K, V>>;
 // 119: create public_dashboards, public_dashboard_org_settings and public_dashboard_outbox.
 // 120: add search_type to search_queue.
 // 121: point pre-run incidents' run summary at their newest v1 report.
-pub const DB_SCHEMA_VERSION: u64 = 121;
+// 122: add source, query_key, streams, run_count, updated_at and status to query_history.
+pub const DB_SCHEMA_VERSION: u64 = 122;
 pub const DB_SCHEMA_KEY: &str = "/db_schema_version/";
 
 // global version variables

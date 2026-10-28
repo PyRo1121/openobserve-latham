@@ -688,7 +688,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <OIcon name="history" size="sm" />
                 </span>
               </template>
-              {{ t("search.searchHistory") }}
+              {{ t("search.usageCostHistory") }}
             </ODropdownItem>
           </ODropdownGroup>
 
@@ -993,6 +993,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
               </ODropdown>
             </OButtonGroup>
+            <RecentSearchesButton
+              source="logs"
+              class="me-1"
+              :examples="recentExamples"
+              data-test="logs-search-bar-recent-searches-btn"
+              @run="(entry, when) => restoreRecent(entry, when, true)"
+              @load="(entry, when) => restoreRecent(entry, when, false)"
+              @view-all="openRecentSearches"
+              @example="applyRecentExample"
+            />
             <div
               v-if="
                 searchObj.meta.logsVisualizeToggle === 'visualize' ||
@@ -1293,7 +1303,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <template #before>
             <div
+              ref="queryEditorBoxRef"
               class="relative flex h-full flex-col overflow-hidden"
+              @keydown.capture="onRecentEditorKeydown"
               :class="{
                 'rounded-r-none border-e-0': searchObj.data.transformType,
                 'fn-editor-open': showFunctionEditor,
@@ -1307,6 +1319,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 :keywords="effectiveKeywords"
                 :suggestions="effectiveSuggestions"
                 :field-value-resolver="resolveFieldValues"
+                :recent-queries="recentQueries"
                 :debounce-time="100"
                 :nlp-mode="searchObj.meta.nlpMode"
                 :has-expand-button="!showFunctionEditor"
@@ -1339,12 +1352,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 @focus="onQueryEditorFocus"
                 @blur="handleQueryEditorBlur"
               />
+              <RecentSearchesFocusDropdown
+                ref="recentFocusRef"
+                v-model:open="recentFocusOpen"
+                source="logs"
+                :anchor="queryEditorBoxRef"
+                :examples="recentExamples"
+                @run="(entry, when) => restoreRecent(entry, when, true)"
+                @load="(entry, when) => restoreRecent(entry, when, false)"
+                @view-all="openRecentSearches"
+                @example="applyRecentExample"
+                @dismiss="focusEditor"
+              />
               <!-- Query editor placeholder overlay — shown when editor is empty and unfocused -->
               <div
                 v-if="
                   searchObj.data.editorValue == '' &&
                   searchObj.meta.queryEditorPlaceholderFlag &&
-                  !searchObj.meta.nlpMode
+                  !searchObj.meta.nlpMode &&
+                  !recentFocusOpen
                 "
                 class="query-editor-placeholder-overlay pointer-events-none absolute top-0 right-0 bottom-0 left-0 z-1 flex items-start [padding:0.1875rem_0.5rem_0_2.15rem] select-none"
               >
@@ -1416,6 +1442,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
     </div>
 
+    <RecentSearchesDrawer ref="recentDrawerRef" source="logs" @restore="restoreRecent" />
     <ODialog
       data-test="search-bar-confirm-dialog"
       ref="confirmDialog"
@@ -1730,6 +1757,28 @@ import DateTime from "@/components/DateTime.vue";
 import ShareButton from "@/components/common/ShareButton.vue";
 import OButton from "@/lib/core/Button/OButton.vue";
 import ODialog from "@/lib/overlay/Dialog/ODialog.vue";
+import RecentSearchesButton from "@/components/queryHistory/RecentSearchesButton.vue";
+import RecentSearchesDrawer from "@/components/queryHistory/RecentSearchesDrawer.vue";
+import RecentSearchesFocusDropdown from "@/components/queryHistory/RecentSearchesFocusDropdown.vue";
+import {
+  useRecentSearches,
+  useRecentSearchesList,
+} from "@/composables/queryHistory/useRecentSearches";
+import { useLogsHistoryRecorder } from "@/composables/queryHistory/useLogsHistoryRecorder";
+import {
+  recentQueryList,
+  recentsOpenAfterEdit,
+  routeEditorKeyToRecents,
+  type RestoreTime,
+} from "@/utils/queryHistory/recentSearches";
+import { recentSearchRoute } from "@/utils/queryHistory/routes";
+import {
+  isUntouchedLogsQuery,
+  logsExampleQueries,
+  logsRouteQuery,
+  requestLogsReapply,
+} from "@/utils/queryHistory/logs";
+import type { HistoryStatus, QueryHistoryEntry } from "@/services/query_history";
 import OSplitter from "@/lib/core/Splitter/OSplitter.vue";
 import useLogs from "@/composables/useLogs";
 import { useToolbarResponsive } from "@/composables/useToolbarResponsive";
@@ -1934,6 +1983,9 @@ export default defineComponent({
     OSwitch,
     OTree,
     SavedViewsListDialog,
+    RecentSearchesButton,
+    RecentSearchesDrawer,
+    RecentSearchesFocusDropdown,
   },
   emits: [
     "searchdata",
@@ -2204,6 +2256,10 @@ export default defineComponent({
 
     const { isStreamExists, isStreamFetched, getStreams, getStream } = useStreams(t);
     const queryEditorRef = ref(null);
+    const queryEditorBoxRef = ref<HTMLElement | null>(null);
+    const recentFocusRef = ref<InstanceType<typeof RecentSearchesFocusDropdown> | null>(null);
+    const recentDrawerRef = ref<InstanceType<typeof RecentSearchesDrawer> | null>(null);
+    const recentFocusOpen = ref(false);
     const syntaxGuideRef = ref(null);
 
     const {
@@ -2231,6 +2287,7 @@ export default defineComponent({
     const onQueryEditorFocus = () => {
       searchObj.meta.queryEditorPlaceholderFlag = false;
       _sqlOnFocus();
+      openRecentOnFocus();
     };
 
     const focusEditor = () => queryEditorRef.value?.focus?.();
@@ -4411,9 +4468,66 @@ export default defineComponent({
       t,
     );
 
-    const onEditorUserEdit = () => {
+    const onEditorUserEdit = (text = "", previous = "") => {
       autoRun.engine.markEditorDirty();
       updateFreeTextPreview();
+      recentFocusOpen.value = recentsOpenAfterEdit(
+        recentFocusOpen.value,
+        !previous.trim(),
+        recentSearchesEnabled.value && !text.trim(),
+      );
+    };
+
+    useLogsHistoryRecorder();
+    const { enabled: recentSearchesEnabled } = useRecentSearches();
+    const recentListActive = ref(false);
+    const recentList = useRecentSearchesList("logs", recentListActive);
+    const recentQueries = computed(() =>
+      recentSearchesEnabled.value ? recentQueryList(recentList.data.value ?? []) : [],
+    );
+    const recentExamples = computed(() =>
+      logsExampleQueries(
+        String(searchObj.data.stream.selectedStream?.[0] ?? ""),
+        !!searchObj.meta.sqlMode,
+      ),
+    );
+
+    function openRecentOnFocus() {
+      if (!recentSearchesEnabled.value) return;
+      recentListActive.value = true;
+      const text = String(searchObj.data.editorValue ?? searchObj.data.query ?? "");
+      if (isUntouchedLogsQuery(text, !!searchObj.meta.sqlMode)) recentFocusOpen.value = true;
+    }
+
+    // Capture phase: the editor's Escape binding stops the event, and that binding must still run.
+    const onRecentEditorKeydown = (e: KeyboardEvent) => {
+      if (!recentFocusOpen.value) return;
+      routeEditorKeyToRecents(e, recentFocusRef.value, () => (recentFocusOpen.value = false));
+    };
+
+    const openRecentSearches = (status: HistoryStatus | null = null) => {
+      if (!recentSearchesEnabled.value) return false;
+      recentDrawerRef.value?.show(status);
+      return true;
+    };
+
+    const restoreRecent = (entry: QueryHistoryEntry, when: RestoreTime, run: boolean) => {
+      const orgId = store.state.selectedOrganization.identifier;
+      if (entry.source !== "logs") {
+        const route = recentSearchRoute(entry, when, orgId);
+        if (route) router.push(route);
+        return;
+      }
+      router
+        .push({ path: "/logs", query: logsRouteQuery(entry, when, orgId, false) })
+        .finally(() => requestLogsReapply(run));
+    };
+
+    const applyRecentExample = (query: string) => {
+      searchObj.data.query = query;
+      searchObj.data.editorValue = query;
+      updateQuery();
+      focusEditor();
     };
 
     const cancelRun = () => {
@@ -4996,6 +5110,16 @@ export default defineComponent({
       handleRunQueryFn,
       onQueryEditorFocus,
       handleQueryEditorBlur,
+      queryEditorBoxRef,
+      recentFocusRef,
+      recentDrawerRef,
+      recentFocusOpen,
+      recentQueries,
+      recentExamples,
+      onRecentEditorKeydown,
+      openRecentSearches,
+      restoreRecent,
+      applyRecentExample,
       autoCompleteKeywords,
       autoCompleteSuggestions,
       effectiveKeywords,

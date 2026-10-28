@@ -57,14 +57,14 @@ test.describe('Metrics editor query history', () => {
     await expect(metrics.historyRow(first)).toHaveCount(1, { timeout: 15000 });
     await metrics.historyStarredOnly.click();
     await page.keyboard.press('Escape');
-    await expect(metrics.historyTable).toBeHidden();
+    await expect(metrics.historyDrawer).toBeHidden();
 
     // Replace the editor's query, then load the starred entry back in place.
     await runAndRecord(page, pm, second);
     await metrics.openQueryHistory();
     await expect(metrics.historyRow(second)).toHaveCount(1, { timeout: 15000 });
     await metrics.loadHistoryEntry(first);
-    await expect(metrics.historyTable).toBeHidden();
+    await expect(metrics.historyDrawer).toBeHidden();
     await expect
       .poll(() => pm.metricsQueryEditorPage.getCurrentQueryText(), { timeout: 15000 })
       .toBe(first);
@@ -72,7 +72,8 @@ test.describe('Metrics editor query history', () => {
     // Starred entries are never reaped, so remove this run's from the user's history.
     await metrics.openQueryHistory();
     for (const query of [first, second]) {
-      const deleted = page.waitForResponse(isHistoryCall('DELETE'));
+      // The DELETE waits for the row's 6s Undo toast to close.
+      const deleted = page.waitForResponse(isHistoryCall('DELETE'), { timeout: 30000 });
       await metrics.deleteHistoryEntry(query);
       expect((await deleted).ok()).toBe(true);
       await expect(metrics.historyRow(query)).toHaveCount(0, { timeout: 15000 });

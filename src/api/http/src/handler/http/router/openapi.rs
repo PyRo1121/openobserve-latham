@@ -120,6 +120,7 @@ use crate::{
         openobserve_api_search::search::saved_view::update_view,
         openobserve_api_management::request::query_history::record,
         openobserve_api_management::request::query_history::list,
+        openobserve_api_management::request::query_history::clear,
         openobserve_api_management::request::query_history::star,
         openobserve_api_management::request::query_history::delete,
         openobserve_api_management::request::folders::delete_folder,
@@ -665,6 +666,7 @@ use crate::{
             openobserve_api_management::request::query_history::QueryHistoryRequest,
             openobserve_api_management::request::query_history::QueryHistoryStarRequest,
             openobserve_api_management::request::query_history::QueryHistoryEntry,
+            openobserve_api_management::request::query_history::QueryHistoryClearResponse,
             meta::user::UpdateUser,
             meta::user::UserRoleRequest,
             meta::user::PostUserRequest,
@@ -1585,6 +1587,7 @@ mod tests {
         for (path, method) in [
             ("/api/{org_id}/query_history", "post"),
             ("/api/{org_id}/query_history", "get"),
+            ("/api/{org_id}/query_history", "delete"),
             ("/api/{org_id}/query_history/{id}", "patch"),
             ("/api/{org_id}/query_history/{id}", "delete"),
         ] {

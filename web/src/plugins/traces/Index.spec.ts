@@ -26,6 +26,7 @@ import router from "@/test/unit/helpers/router";
 import * as useDurationPercentilesModule from "@/composables/useDurationPercentiles";
 import { buildViewTracesFilter } from "@/plugins/traces/viewTracesHandoff";
 import analytics from "@/services/product_analytics";
+import queryHistory from "@/services/query_history";
 import {
   announceTracesRowNav,
   tracesRowNavAnnouncement,
@@ -1608,6 +1609,54 @@ describe("Index.vue (Main Traces Page)", () => {
       const calls = mockFetchQueryDataWithHttpStream.mock.calls;
       return calls[calls.length - 1][1];
     };
+
+    it("records a Run in recent searches once it completes, and never a page fetch", async () => {
+      const record = vi.spyOn(queryHistory, "record").mockResolvedValue({ data: {} } as never);
+      await mountPage();
+      mockSearchObj.data.resultGrid.currentPage = 0;
+      mockSearchObj.data.editorValue = "service_name = 'cart'";
+      wrapper.vm.runQueryFn();
+      await flushPromises();
+      lastCallbacks().complete({});
+      await flushPromises();
+      expect(record).toHaveBeenCalledTimes(1);
+      expect(record.mock.calls[0][1]).toMatchObject({
+        source: "traces",
+        query: "service_name = 'cart'",
+        streams: ["default"],
+        status: "ok",
+        context: { page: { stream: "default", tab: "spans" } },
+      });
+
+      record.mockClear();
+      await wrapper.vm.getMoreData();
+      lastCallbacks().complete({});
+      await flushPromises();
+      expect(record).not.toHaveBeenCalled();
+      record.mockRestore();
+    });
+
+    it("records a query error as failed and a cancel not at all", async () => {
+      const record = vi.spyOn(queryHistory, "record").mockResolvedValue({ data: {} } as never);
+      await mountPage();
+      mockSearchObj.data.editorValue = "nosuch = 1";
+      wrapper.vm.runQueryFn();
+      await flushPromises();
+      lastCallbacks().error({}, { content: { code: 20004, message: "field not found" } });
+      await flushPromises();
+      expect(record.mock.calls[0][1]).toMatchObject({
+        status: "error",
+        context: { error: "field not found" },
+      });
+
+      record.mockClear();
+      wrapper.vm.runQueryFn();
+      await flushPromises();
+      lastCallbacks().error({}, { content: { code: 20009, message: "cancelled" } });
+      await flushPromises();
+      expect(record).not.toHaveBeenCalled();
+      record.mockRestore();
+    });
 
     describe("J/K page crossing signals (4a §3.4)", () => {
       const navigation = () => mockSearchObj.meta.resultGrid.navigation;

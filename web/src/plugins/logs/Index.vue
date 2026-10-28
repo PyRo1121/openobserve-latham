@@ -111,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
               </template>
               <template #after>
-                <div class="h-full">
+                <div ref="recentSearchesColumnRef" class="h-full">
                   <div class="bg-card-glass-bg relative-position h-full w-full">
                     <div
                       v-if="
@@ -328,7 +328,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         :query-window-us="queryWindowUs"
                         :timezone="store.state.timezone"
                         @jump-to-stream-data="onJumpToStreamData"
-                        @open-history="showSearchHistoryfn"
+                        @open-history="openSearchHistory"
                         @ask-ai="onAskAiFixQuery"
                       />
                     </div>
@@ -567,7 +567,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :query-window-us="queryWindowUs"
               :timezone="store.state.timezone"
               @jump-to-stream-data="onJumpToStreamData"
-              @open-history="showSearchHistoryfn"
+              @open-history="openSearchHistory"
               @ask-ai="onAskAiFixQuery"
             />
             <OEmptyState
@@ -703,6 +703,8 @@ import useBreakpoint from "@/composables/useBreakpoint";
 import OEmptyState from "@/lib/core/EmptyState/OEmptyState.vue";
 import OSpinner from "@/lib/feedback/Spinner/OSpinner.vue";
 import LogsNoEventsState from "@/plugins/logs/LogsNoEventsState.vue";
+import { logsReapplyRequest } from "@/utils/queryHistory/logs";
+import { provideRecentSearchesColumn } from "@/composables/queryHistory/useRecentSearches";
 import LogsNoDataState from "@/plugins/logs/LogsNoDataState.vue";
 import FirstDataPanel from "@/components/ingestion/FirstDataPanel.vue";
 import type { FirstEventResult } from "@/composables/firstEvent/useFirstEventWatch";
@@ -897,6 +899,7 @@ export default defineComponent({
     const { t } = useI18nTyped();
     const store = useStore();
     const router = useRouter();
+    const recentSearchesColumnRef = provideRecentSearchesColumn();
     const {
       searchObj,
       resetSearchObj,
@@ -1183,10 +1186,13 @@ export default defineComponent({
         }
       },
     );
+    // A restore from recent searches bumps the request instead of the URL type, so the same row can be restored twice.
     watch(
-      () => router.currentRoute.value.query.type,
-      async (type) => {
-        if (type == "search_history_re_apply" || type == "ai_chat_query") {
+      () => [router.currentRoute.value.query.type, logsReapplyRequest.value.seq] as const,
+      async ([type, seq], [, prevSeq]) => {
+        const requested = seq !== prevSeq;
+        const runRequested = requested && logsReapplyRequest.value.run;
+        if (requested || type == "search_history_re_apply" || type == "ai_chat_query") {
           searchObj.meta.jobId = "";
           resetRunStateForReapply();
 
@@ -1196,11 +1202,7 @@ export default defineComponent({
           resetSearchObj();
 
           // Set time range based on source type
-          if (
-            type == "ai_chat_query" &&
-            router.currentRoute.value.query.from &&
-            router.currentRoute.value.query.to
-          ) {
+          if (router.currentRoute.value.query.from && router.currentRoute.value.query.to) {
             searchBarRef.value.dateTimeRef.setAbsoluteTime(
               router.currentRoute.value.query.from,
               router.currentRoute.value.query.to,
@@ -1223,6 +1225,8 @@ export default defineComponent({
           await getFunctions();
           await extractFields();
           refreshData();
+          // A newer restore started meanwhile; it carries its own run decision.
+          if (runRequested && logsReapplyRequest.value.seq === seq) runQueryFn();
         }
       },
     );
@@ -1962,6 +1966,11 @@ export default defineComponent({
         handleRunQueryFn();
       }
     };
+    // The usage page stays the fallback when recent searches are turned off.
+    const openSearchHistory = () => {
+      if (!searchBarRef.value?.openRecentSearches?.()) showSearchHistoryfn();
+    };
+
     const showSearchHistoryfn = () => {
       // Search History is now its own route (was an `action=history` overlay).
       // Forward the active stream type/name so the history shown there matches
@@ -4020,6 +4029,7 @@ export default defineComponent({
     ]);
 
     return {
+      recentSearchesColumnRef,
       autoRun,
       rowNavAnnouncement: logsRowNavAnnouncement,
       isAutoRunOn,
@@ -4085,6 +4095,7 @@ export default defineComponent({
       onChangeInterval,
       onAutoIntervalTrigger,
       showSearchHistoryfn,
+      openSearchHistory,
       isAiEnabled,
       onSelectStream,
       onPickStream,

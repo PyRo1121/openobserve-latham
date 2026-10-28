@@ -351,7 +351,7 @@ const sharedStubs = {
       "debounceTime",
       "fieldValueResolver",
     ],
-    emits: ["update:query", "run-query", "focus", "blur"],
+    emits: ["update:query", "run-query", "focus", "blur", "user-edit"],
     setup() {
       return {
         setValue: vi.fn(),
@@ -2429,6 +2429,59 @@ describe("SearchBar", () => {
         undefined,
       );
       expect(searchObjInstance.data.parsedQuery).toEqual(previous);
+    });
+  });
+
+  describe("recent-searches dropdown and the editor placeholder", () => {
+    it("hides the typing placeholder while the dropdown is open, so only one list changes", async () => {
+      wrapper = mountSearchBar();
+      await flushPromises();
+      searchObjInstance.data.editorValue = "";
+      searchObjInstance.meta.queryEditorPlaceholderFlag = true;
+      const vm = wrapper.vm as unknown as { recentFocusOpen: boolean };
+      vm.recentFocusOpen = false;
+      await flushPromises();
+      expect(wrapper.find(".query-editor-placeholder-overlay").exists()).toBe(true);
+
+      vm.recentFocusOpen = true;
+      await flushPromises();
+      expect(wrapper.find(".query-editor-placeholder-overlay").exists()).toBe(false);
+
+      vm.recentFocusOpen = false;
+      await flushPromises();
+      expect(wrapper.find(".query-editor-placeholder-overlay").exists()).toBe(true);
+    });
+  });
+
+  describe("recent-searches dropdown on an edit that empties the editor", () => {
+    it("opens without a refocus when the text is cleared and closes on the next character", async () => {
+      store.state.zoConfig.query_history_enabled = true;
+      wrapper = mountSearchBar();
+      await flushPromises();
+      searchObjInstance.data.editorValue = "service_name='api'";
+      const vm = wrapper.vm as unknown as { recentFocusOpen: boolean };
+      const editor = wrapper.findComponent('[data-test="code-query-editor-stub"]');
+      editor.vm.$emit("focus");
+      await flushPromises();
+      expect(vm.recentFocusOpen).toBe(false);
+
+      editor.vm.$emit("user-edit", "", "service_name='api'");
+      await flushPromises();
+      expect(vm.recentFocusOpen).toBe(true);
+
+      editor.vm.$emit("user-edit", "s", "");
+      await flushPromises();
+      expect(vm.recentFocusOpen).toBe(false);
+
+      searchObjInstance.data.editorValue = "";
+      editor.vm.$emit("focus");
+      await flushPromises();
+      expect(vm.recentFocusOpen).toBe(true);
+      vm.recentFocusOpen = false;
+      editor.vm.$emit("user-edit", "", "service_name = 'checkout'");
+      await flushPromises();
+      expect(vm.recentFocusOpen).toBe(true);
+      delete store.state.zoConfig.query_history_enabled;
     });
   });
 });
