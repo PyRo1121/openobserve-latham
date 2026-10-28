@@ -21,6 +21,15 @@ use axum::response::Response as HttpResponse;
 use common::meta::http::HttpResponse as MetaHttpResponse;
 use serde::Deserialize;
 
+#[cfg(feature = "enterprise")]
+const EDGE_HISTORY_WINDOW_MICROS: i64 = 24 * 60 * 60 * 1_000_000;
+// Allows clock skew while keeping every bound far from i64 overflow in the step alignment.
+#[cfg(any(feature = "enterprise", test))]
+const MAX_FUTURE_MICROS: i64 = 24 * 60 * 60 * 1_000_000;
+// The default data retention (ZO_COMPACT_DATA_RETENTION_DAYS); a longer window reads nothing more.
+#[cfg(any(feature = "enterprise", test))]
+const MAX_WINDOW_DAYS: i64 = 3650;
+
 /// Query parameters for service graph API
 #[derive(Debug, Deserialize)]
 pub struct ServiceGraphQuery {
@@ -53,6 +62,7 @@ pub struct ServiceGraphQuery {
     ),
     responses(
         (status = 200, description = "Success", content_type = "application/json", body = Object),
+        (status = 400, description = "Invalid time window (negative start_time, end_time not after start_time, end_time more than a day ahead, or longer than 3650 days) or a stream name the metrics query cannot quote", content_type = "application/json", body = String),
         (status = 403, description = "Forbidden - Enterprise feature", content_type = "application/json", body = String),
         (status = 500, description = "Internal Server Error", content_type = "application/json", body = ()),
     ),
@@ -65,15 +75,15 @@ pub async fn get_current_topology(
     axum::extract::Path(org_id): axum::extract::Path<String>,
     axum::extract::Query(query): axum::extract::Query<ServiceGraphQuery>,
 ) -> HttpResponse {
-    // Resolve the current window boundaries
-    let (start_time, end_time) =
-        if let (Some(start), Some(end)) = (query.start_time, query.end_time) {
-            (start, end)
-        } else {
-            let now = chrono::Utc::now().timestamp_micros();
-            let window_micros = super::DEFAULT_QUERY_WINDOW_MINUTES * 60 * 1_000_000;
-            (now - window_micros, now)
-        };
+    let (start_time, end_time) = match resolve_window(
+        query.start_time,
+        query.end_time,
+        chrono::Utc::now().timestamp_micros(),
+        super::DEFAULT_QUERY_WINDOW_MINUTES * 60 * 1_000_000,
+    ) {
+        Ok(window) => window,
+        Err(e) => return MetaHttpResponse::bad_request(e),
+    };
 
     let filter = v4_read_filter(&query);
     if let Err(e) = filter.validate() {
@@ -122,6 +132,33 @@ fn trace_stream_filter(stream_name: Option<String>) -> Option<String> {
     stream_name.filter(|s| !s.is_empty() && s != "all")
 }
 
+#[cfg(any(feature = "enterprise", test))]
+fn resolve_window(
+    start: Option<i64>,
+    end: Option<i64>,
+    now: i64,
+    default_span_micros: i64,
+) -> Result<(i64, i64), String> {
+    let (Some(start), Some(end)) = (start, end) else {
+        return Ok((now - default_span_micros, now));
+    };
+    if start < 0 {
+        return Err("start_time must not be negative".to_string());
+    }
+    if end <= start {
+        return Err("end_time must be after start_time".to_string());
+    }
+    if end > now.saturating_add(MAX_FUTURE_MICROS) {
+        return Err("end_time must be at most one day after the current time".to_string());
+    }
+    if end - start > MAX_WINDOW_DAYS * 24 * 60 * 60 * 1_000_000 {
+        return Err(format!(
+            "the window from start_time to end_time must not exceed {MAX_WINDOW_DAYS} days"
+        ));
+    }
+    Ok((start, end))
+}
+
 /// Query parameters for edge trend endpoint
 #[derive(Debug, Deserialize)]
 pub struct EdgeHistoryQuery {
@@ -152,7 +189,7 @@ pub struct EdgeHistoryQuery {
     ),
     responses(
         (status = 200, description = "Success", content_type = "application/json", body = Object),
-        (status = 400, description = "A service or stream name the metrics query cannot quote", content_type = "application/json", body = String),
+        (status = 400, description = "Invalid time window (negative start_time, end_time not after start_time, end_time more than a day ahead, or longer than 3650 days), or a service or stream name the metrics query cannot quote", content_type = "application/json", body = String),
         (status = 403, description = "Forbidden - Enterprise feature"),
         (status = 500, description = "Internal Server Error", content_type = "application/json", body = ()),
     ),
@@ -166,13 +203,15 @@ pub async fn get_edge_history(
 
     use super::v4::history::{EdgeFilter, fetch_edge_history};
 
-    let (start_time, end_time) =
-        if let (Some(start), Some(end)) = (query.start_time, query.end_time) {
-            (start, end)
-        } else {
-            let now = chrono::Utc::now().timestamp_micros();
-            (now - 24 * 60 * 60 * 1_000_000, now)
-        };
+    let (start_time, end_time) = match resolve_window(
+        query.start_time,
+        query.end_time,
+        chrono::Utc::now().timestamp_micros(),
+        EDGE_HISTORY_WINDOW_MICROS,
+    ) {
+        Ok(window) => window,
+        Err(e) => return MetaHttpResponse::bad_request(e),
+    };
     let non_empty = |v: Option<String>| v.filter(|s| !s.is_empty());
     let filter = EdgeFilter {
         client: non_empty(query.client_service),
@@ -228,10 +267,67 @@ pub async fn get_current_topology(
     MetaHttpResponse::forbidden("Not Supported")
 }
 
-#[cfg(all(test, feature = "enterprise"))]
+#[cfg(test)]
 mod tests {
     use super::*;
 
+    const NOW: i64 = 1_800_000_000_000_000;
+    const SPAN: i64 = 3_600_000_000;
+
+    #[test]
+    fn test_resolve_window_uses_an_explicit_window() {
+        assert_eq!(
+            resolve_window(Some(1_000), Some(2_000), NOW, SPAN),
+            Ok((1_000, 2_000))
+        );
+        assert_eq!(resolve_window(Some(0), Some(1), NOW, SPAN), Ok((0, 1)));
+    }
+
+    #[test]
+    fn test_resolve_window_rejects_a_negative_start() {
+        assert!(resolve_window(Some(-1), Some(2_000), NOW, SPAN).is_err());
+        assert!(resolve_window(Some(i64::MIN), Some(i64::MAX), NOW, SPAN).is_err());
+    }
+
+    #[test]
+    fn test_resolve_window_rejects_an_end_not_after_the_start() {
+        assert!(resolve_window(Some(2_189_567), Some(-1_358), NOW, SPAN).is_err());
+        assert!(resolve_window(Some(2_000), Some(2_000), NOW, SPAN).is_err());
+        assert!(resolve_window(Some(2_000), Some(1_999), NOW, SPAN).is_err());
+    }
+
+    #[test]
+    fn test_resolve_window_rejects_an_end_beyond_tomorrow_and_near_i64_max() {
+        assert_eq!(
+            resolve_window(Some(NOW), Some(NOW + MAX_FUTURE_MICROS), NOW, SPAN),
+            Ok((NOW, NOW + MAX_FUTURE_MICROS))
+        );
+        assert!(resolve_window(Some(NOW), Some(NOW + MAX_FUTURE_MICROS + 1), NOW, SPAN).is_err());
+        assert!(resolve_window(Some(i64::MAX - 1), Some(i64::MAX), NOW, SPAN).is_err());
+        assert!(resolve_window(Some(0), Some(i64::MAX), NOW, SPAN).is_err());
+        assert!(resolve_window(Some(0), Some(1), i64::MAX, SPAN).is_ok());
+    }
+
+    #[test]
+    fn test_resolve_window_caps_the_span_at_the_default_retention() {
+        let max_span = MAX_WINDOW_DAYS * 24 * 60 * 60 * 1_000_000;
+        assert_eq!(
+            resolve_window(Some(NOW - max_span), Some(NOW), NOW, SPAN),
+            Ok((NOW - max_span, NOW))
+        );
+        let err = resolve_window(Some(NOW - max_span - 1), Some(NOW), NOW, SPAN).unwrap_err();
+        assert!(err.contains("3650 days"), "{err}");
+    }
+
+    #[test]
+    fn test_resolve_window_defaults_when_a_bound_is_missing() {
+        let default = Ok((NOW - SPAN, NOW));
+        assert_eq!(resolve_window(None, None, NOW, SPAN), default);
+        assert_eq!(resolve_window(Some(-5), None, NOW, SPAN), default);
+        assert_eq!(resolve_window(None, Some(-5), NOW, SPAN), default);
+    }
+
+    #[cfg(feature = "enterprise")]
     #[test]
     fn test_v4_read_filter_maps_stream_and_env_only() {
         let query = |stream: Option<&str>, env: Option<&str>| ServiceGraphQuery {
@@ -252,5 +348,70 @@ mod tests {
         let f = v4_read_filter(&query(Some("default"), Some("prod")));
         assert_eq!(f.trace_stream.as_deref(), Some("default"));
         assert_eq!(f.agent_env.as_deref(), Some("prod"));
+    }
+
+    #[cfg(feature = "enterprise")]
+    #[tokio::test]
+    async fn test_handlers_reject_an_invalid_window_with_400() {
+        use axum::extract::{Path, Query};
+
+        let topology = get_current_topology(
+            Path("default".to_string()),
+            Query(ServiceGraphQuery {
+                start_time: Some(2_189_567),
+                end_time: Some(-1_358),
+                filter: None,
+                stream_name: None,
+                agent_id: None,
+                agent_name: None,
+                agent_env: None,
+            }),
+        )
+        .await;
+        assert_eq!(topology.status(), axum::http::StatusCode::BAD_REQUEST);
+
+        let history = get_edge_history(
+            Path("default".to_string()),
+            Query(EdgeHistoryQuery {
+                client_service: None,
+                server_service: None,
+                start_time: Some(-1),
+                end_time: Some(10),
+                stream_name: None,
+            }),
+        )
+        .await;
+        assert_eq!(history.status(), axum::http::StatusCode::BAD_REQUEST);
+
+        let near_max = get_edge_history(
+            Path("default".to_string()),
+            Query(EdgeHistoryQuery {
+                client_service: None,
+                server_service: None,
+                start_time: Some(i64::MAX - 1),
+                end_time: Some(i64::MAX),
+                stream_name: None,
+            }),
+        )
+        .await;
+        assert_eq!(near_max.status(), axum::http::StatusCode::BAD_REQUEST);
+
+        let near_max_topology = get_current_topology(
+            Path("default".to_string()),
+            Query(ServiceGraphQuery {
+                start_time: Some(i64::MAX - 1),
+                end_time: Some(i64::MAX),
+                filter: None,
+                stream_name: None,
+                agent_id: None,
+                agent_name: None,
+                agent_env: None,
+            }),
+        )
+        .await;
+        assert_eq!(
+            near_max_topology.status(),
+            axum::http::StatusCode::BAD_REQUEST
+        );
     }
 }
