@@ -85,6 +85,7 @@ describe("Header Component", () => {
 
     const globalConfig = {
       plugins: defaultGlobalConfig.plugins,
+      mocks: { $route: { name: "traffic" } },
       // Header renders useTheme(), whose useStore() resolves via vuex's `store`
       // injection key — the store prop alone does not satisfy it. Provide the
       // same per-test store so storeOverrides still drive theme-dependent logic.
@@ -185,6 +186,11 @@ describe("Header Component", () => {
   });
 
   describe("Logo Rendering", () => {
+    it("keeps native controls without an Enterprise sales promotion", () => {
+      expect(wrapper.find('[data-test="upgrade-to-enterprise-btn"]').exists()).toBe(false);
+      expect(wrapper.findComponent({ name: "EnterpriseUpgradeDialog" }).exists()).toBe(false);
+      expect(wrapper.findComponent({ name: "OrganizationSelector" }).exists()).toBe(true);
+    });
     it("should display OpenObserve logo by default", async () => {
       const logoWrapper = createWrapper({
         mountType: "mount",
@@ -454,7 +460,7 @@ describe("Header Component", () => {
       aiWrapper.unmount();
     });
 
-    it("should not display AI button if not enterprise", async () => {
+    it("should display our runtime-enabled AI button in the OSS workspace", async () => {
       const aiWrapper = createWrapper({
         mountType: "mount",
         storeOverrides: {
@@ -472,9 +478,8 @@ describe("Header Component", () => {
 
       await aiWrapper.vm.$nextTick();
 
-      // Verify AI button is NOT rendered
       const aiButton = aiWrapper.find('[data-test="menu-link-ai-item"]');
-      expect(aiButton.exists()).toBe(false);
+      expect(aiButton.exists()).toBe(true);
 
       aiWrapper.unmount();
     });

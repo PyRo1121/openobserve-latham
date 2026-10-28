@@ -29,10 +29,10 @@
   --color-text-inverse: var(--color-white); /* text on dark/colored bg */
 
   /* Surfaces */
-  --color-surface-base: var(--color-white);
-  --color-surface-panel: var(--color-grey-50);
+  --color-surface-base: #ffffff;
+  --color-surface-panel: #f3f7fa;
   --color-surface-overlay: var(--color-white);
-  --color-surface-subtle: var(--color-grey-100);
+  --color-surface-subtle: #eaf1f6;
   --color-surface-subtle-hover: var(--color-grey-200);
   /* Floating chip/pill (e.g. the NDV's prev/next node buttons over the white
      Input/Output panes) — a WHITE fill that reads via its border + shadow in light

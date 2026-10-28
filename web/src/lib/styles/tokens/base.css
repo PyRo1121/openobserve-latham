@@ -351,7 +351,7 @@
      five names for what was one value; every former ref was repointed
      (small→default, large→surface). Do NOT reintroduce sm/md/lg/xl. */
   --radius-default: 0.375rem; /* 6px  — control tier */
-  --radius-surface: 0.75rem; /* 12px — surface tier (matches the historical dialog curve) */
+  --radius-surface: 0.625rem; /* 10px — surface tier */
   /* eslint-disable-next-line local/no-hardcoded-px -- fully-rounded pill sentinel */
   --radius-full: 9999px; /* pills / avatars / circles */
   /* Checkboxes stay at the original 4px: the tick box is tiny (12–16px), and the
@@ -489,23 +489,23 @@
   --color-syntax-deletion-bg: #ffeef0;
   /* Read-only colorized queries (colorizeQuery): the query editor's Monaco hues, nudged to clear 4.5:1 on surface-subtle. */
   --color-query-syntax-keyword: #0000ff;
-  --color-query-syntax-function: #c700c7;
+  --color-query-syntax-function: #ba00ba;
   --color-query-syntax-string: #a31515;
-  --color-query-syntax-number: #097f53;
+  --color-query-syntax-number: #08764d;
   --color-query-syntax-comment: #008000;
   /* Brand gradients — theme-independent (same in light/dark) unless noted.
      One AI gradient reused widely; -subtle/-faint are its idle washes
      (dark alpha bumped in dark.css). */
-  --color-gradient-ai: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  --color-gradient-ai: linear-gradient(#155e75, #155e75);
   --color-gradient-ai-subtle: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.15) 0%,
-    rgba(236, 72, 153, 0.15) 100%
+    rgba(21, 94, 117, 0.12) 0%,
+    rgba(21, 94, 117, 0.12) 100%
   );
   --color-gradient-ai-faint: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.05) 0%,
-    rgba(236, 72, 153, 0.05) 100%
+    rgba(21, 94, 117, 0.05) 0%,
+    rgba(21, 94, 117, 0.05) 100%
   );
   --color-gradient-brand-ribbon: linear-gradient(90deg, #f59e0b, #ec4899, #7b61ff);
   --color-gradient-notification: linear-gradient(135deg, #ef4444 0%, #ec4899 100%);
@@ -563,8 +563,8 @@
      in dark.css. */
   --color-section-accent-secondary: var(--color-teal-600);
   /* AI-chat message bubbles — subtle theme-aware gradient tints (dark in dark.css). */
-  --color-chat-bubble-user: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
-  --color-chat-bubble-ai: linear-gradient(135deg, #f8f9ff 0%, #e8edff 100%);
+  --color-chat-bubble-user: linear-gradient(#e9f3f7, #e9f3f7);
+  --color-chat-bubble-ai: linear-gradient(#f3f7fa, #f3f7fa);
   /* Destination-preview brand replicas (Slack/Teams/Email message mockups) —
      FIXED, theme-independent (must look like the real product in any app theme). */
   --color-brand-msg-text: #4a5568;

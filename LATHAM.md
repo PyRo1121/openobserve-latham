@@ -18,3 +18,5 @@ node --max-old-space-size=8192 node_modules/vite/bin/vite.js build --base /_next
 The generated frontend can be served as private Cloudflare Worker assets; API requests continue to the existing OpenObserve container through the authenticated gateway. No Rust or container rebuild is required. Model credentials stay in the Worker binding, outside browser assets.
 
 Modified source is available on this branch under the upstream AGPL license. This is an independent deployment and is not OpenObserve Enterprise or the upstream SRE Agent.
+
+The Atlas visual refinement uses the existing shared semantic tokens and locally served Geist fonts across the native workspace. Dark surfaces use marine blue; light mode uses pale blue surfaces. The O2 Signature preset retains its persisted name for compatibility and now uses the Latham ice-blue/teal accent. User-selected alternative themes remain available. The header no longer renders the Enterprise promotion or its unused upgrade dialog. Upstream attribution and licensing remain available.

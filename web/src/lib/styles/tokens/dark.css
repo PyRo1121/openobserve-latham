@@ -47,17 +47,17 @@
        base    = editor / main content canvas
        well    = recessed / segmented track
        overlay = menus, dropdowns, tooltips */
-  --d-chrome: #0e0f11; /* title bar + left activity-bar strip             */
-  --d-base: #0d1117; /* MAIN: content card + table canvas               */
-  --d-well: #2d2d2d; /* recessed wells, segmented-control track         */
-  --d-panel: #181818; /* folder sidebar, sub rails, cards, dialogs (DM)  */
-  --d-overlay: #202020; /* menus, dropdowns, tooltips, table-header (top tier,
+  --d-chrome: #101c2a; /* title bar + left activity-bar strip             */
+  --d-base: #162536; /* MAIN: content card + table canvas               */
+  --d-well: #122131; /* recessed wells, segmented-control track         */
+  --d-panel: #192b3d; /* folder sidebar, sub rails, cards, dialogs (DM)  */
+  --d-overlay: #1d3043; /* menus, dropdowns, tooltips, table-header (top tier,
                                 lifts above panel #181818 via border + shadow)   */
 
   /* Borders & dividers — VS Code widget / panel borders */
-  --d-divider: #3c3c3c; /* subtle: row & section separators            */
-  --d-border: #454545; /* default: card / input / table / rail edges  */
-  --d-border-strong: #6b6b6b; /* strong: checkbox / radio / file outlines    */
+  --d-divider: #2c4255; /* subtle: row & section separators            */
+  --d-border: #415c72; /* default: card / input / table / rail edges  */
+  --d-border-strong: #718b9e; /* strong: checkbox / radio / file outlines    */
 
   /* Text — mapped straight to the registered --color-grey-* palette in the
        block below (mirrors light mode, where each tier = a grey step). No
@@ -72,7 +72,7 @@
                              the dashboard-folder hover (theme-tinted, not grey) */
   --d-selected: color-mix(in srgb, var(--color-primary-500) 30%, var(--d-panel));
   /* selected row — teal-tinted (brand signal)       */
-  --d-zebra: #252526; /* striped-row bg — VS Code list alternating row    */
+  --d-zebra: #1a2c3e; /* striped-row background */
 
   /* --- Text — grey palette steps, one per tier (light half of the ramp) --- */
   --color-text-heading: var(--color-grey-200); /* h1-h6, modal titles — brightest */
@@ -136,11 +136,12 @@
   /* AI idle washes are denser in dark for legibility */
   --color-gradient-ai-subtle: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.5) 0%,
-    rgba(236, 72, 153, 0.5) 100%
+    rgba(131, 211, 228, 0.12) 0%,
+    rgba(131, 211, 228, 0.12) 100%
   );
-  --color-chat-bubble-user: linear-gradient(135deg, #1e2235 0%, #252a3d 100%);
-  --color-chat-bubble-ai: linear-gradient(135deg, #2a2d47 0%, #1e213a 100%);
+  --color-chat-bubble-user: linear-gradient(#203e52, #203e52);
+  --color-chat-bubble-ai: linear-gradient(#192b3d, #192b3d);
+  --color-thread-tool-link: var(--color-primary-400);
 
   /* --- Surfaces (mapped — elevation order preserved from light mode) --- */
   --color-surface-base: var(--d-base); /* content card + table canvas (lifted) */
@@ -717,7 +718,7 @@
   --color-status-success-bg: #253627;
   /* Explicit override: component.css's light value darkened for text legibility
      there, so dark keeps the original orange-600 it already clears 4.5:1 with. */
-  --color-status-flaky-text: #ea580c;
+  --color-status-flaky-text: #f58b43;
   /* Favorite (filled star) — lighter yellow (yellow-400) so it reads clearly on
      dark surfaces without vibrating the way a saturated yellow-500 would. */
   --color-favorite: #facc15;
@@ -856,7 +857,7 @@
   --color-log-table-row-hover: #3a4a78;
   --color-pivot-header-border: rgba(255, 255, 255, 0.12);
   --color-section-header-bg: #28292a;
-  --color-severity-error-color: #d95c5c;
+  --color-severity-error-color: #ee8585;
   --color-severity-warning-color: #d4944a;
   --color-status-info-bg: #181829;
   --color-status-info-text: #a1afff;
